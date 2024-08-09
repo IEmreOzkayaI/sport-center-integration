@@ -3,7 +3,11 @@ import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SessionPayload } from './definitions';
+import { SessionPayload, User } from '../definitions';
+import { users } from '@/lib/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 
 const secretKey = process.env.SECRET_KEY;
 const key = new TextEncoder().encode(secretKey);
@@ -16,7 +20,6 @@ const auth = {
 }
 
 export async function encrypt(payload: SessionPayload) {
-
     return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -35,8 +38,8 @@ export async function decrypt(session: string | undefined = '') {
     }
 }
 
-export async function createSession({ id, name, role }: SessionPayload) {
-    const session = await encrypt({ id, name, role });
+export async function createSession({ id, username, role }: SessionPayload) {
+    const session = await encrypt({ id, username, role });
 
     cookies().set(auth.cookie_name, session, { ...auth.cookie_options, sameSite: 'lax', expires: new Date(Date.now() + auth.cookie_expire_time) });
     redirect('/dashboard');
@@ -46,21 +49,52 @@ export async function verifySession() {
     const cookie = cookies().get('session')?.value;
     const session = await decrypt(cookie);
 
-    if (!session?.id) {
-        redirect('/log-in');
-    }
-    return { isAuth: true, id: session.is, name: session.name, role: session.role };
-}
-
-export async function getSession() {
-    const cookie = cookies().get('session')?.value;
-    const session = await decrypt(cookie);
-
     if (!session) {
         return null;
     }
-    return { id: session.id, name: session.name, role: session.role };
+    return { id: session.id, username: session.username, role: session.role };
 }
+
+export function deleteSession() {
+    cookies().delete('session');
+    redirect('/home');
+}
+
+export const getUser = async (): Promise<User | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+        const data: User[] = await db.select().from(users).where(eq(users.id, session.id.toString()));
+        const user = data[0];
+
+        const formattedUser: User = {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            status: user.status,
+            phone: user.phone,
+        };
+
+        return formattedUser;
+    } catch (error) {
+        console.log('Failed to fetch user', error);
+        return null;
+    }
+};
+
+
+
+// export async function verifySession() {
+//     const cookie = cookies().get('session')?.value;
+//     const session = await decrypt(cookie);
+
+//     if (!session?.id) {
+//         redirect('/log-in');
+//     }
+//     return { isAuth: true, id: session.is, name: session.name, role: session.role };
+// }
+
 // export async function updateSession(payload: SessionPayload) {
 
 //     if (!payload) {
@@ -72,8 +106,3 @@ export async function getSession() {
 
 //     cookies().set(auth.cookie_name, updatedSession, { ...auth.cookie_options, sameSite: 'lax', expires: new Date(Date.now() + auth.cookie_expire_time) });
 // }
-
-export function deleteSession() {
-    cookies().delete('session');
-    redirect('/log-in');
-}

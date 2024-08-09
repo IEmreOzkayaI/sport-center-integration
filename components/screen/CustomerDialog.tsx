@@ -6,9 +6,9 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog"
 
-import UserForm from './UserForm'
+import UserForm from './CustomerForm'
 
-export default function UserDialog({ title }: { title: string }) {
+export default function CustomerDialog({ title }: { title: string }) {
     return (
         <Dialog>
             <DialogTrigger className="bg-black px-4 py-2 text-white rounded-md font-bold">{title}</DialogTrigger>

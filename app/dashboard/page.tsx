@@ -1,12 +1,10 @@
 "use server"
 
-import StatisticCard from "@/components/custom/root/StatisticCard";
-import UserTable from "@/components/custom/root/table/UserTable";
-import UserDetail from "@/components/custom/root/UserDetail";
+import CustomerDetail from "@/components/screen/CustomerDetail";
+import CustomerTable from "@/components/screen/CustomerTable";
+import StatisticCard from "@/components/screen/StatisticCard";
 
 import { TOTAL_ACTIVE_USER, TOTAL_MEMBER_AMOUNT, TOTAL_PROFIT, TOTAL_SPORT_CENTER } from "@/constants";
-import { getSession, verifySession } from "@/lib/auth/session.auth";
-import userStore from "@/store/user.store";
 import { Activity, Building, CreditCard, Users } from "lucide-react";
 
 export default async function Home() {
@@ -32,8 +30,8 @@ export default async function Home() {
                 sm:flex sm:flex-col sm:gap-4
                 md:row-span-8 md:flex md:flex-row md:gap-10
                 ">
-                <UserTable className="w-full md:w-3/4" />
-                <UserDetail className="w-full md:w-1/4" />
+                <CustomerTable className="w-full md:w-3/4" />
+                <CustomerDetail className="w-full md:w-1/4" />
             </div>
         </main>
     );

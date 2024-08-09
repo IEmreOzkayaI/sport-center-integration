@@ -1,36 +1,19 @@
-import 'server-only';
+"use server"
 import { eq } from 'drizzle-orm';
-import { verifySession } from '../lib/auth/session.auth';
+import { verifySession } from './session.action';
 import db from '../lib/db';
 import { users } from '../lib/drizzle/schema';
+import { User } from '@/definitions';
 
-export async function getAllUsers() {
+export async function getAllUsers(): Promise<any> {
     const session = await verifySession();
     if (!session) return null;
 
     try {
-      const data = await db.select().from(users);
-      const users = data;
-
-      return users;
+        const data = await db.select().from(users);
+        return data;
     } catch (error) {
-      console.log('Failed to fetch users');
-      return null;
+        console.log('Failed to fetch users');
+        return null;
     }
 }
-
-
-export const getUser = async () => {
-    const session = await verifySession();
-    if (!session) return null;
-
-    try {
-      const data = await db.select().from(users).where(eq(users.id, session.id.toString()));
-      const user = data[0];
-
-      return user;
-    } catch (error) {
-      console.log('Failed to fetch user');
-      return null;
-    }
-  };

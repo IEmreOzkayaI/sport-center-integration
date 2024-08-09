@@ -18,19 +18,21 @@ import {
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 import sessionStore from "@/store/session.store"
-import UserDialog from "../../add/UserDialog"
 import PaginationLine from "./PaginationLine"
+import CustomerDialog from "./CustomerDialog"
 
 
-export default function UserTable(props: { className?: string }) {
+
+export default function CustomerTable(props: { className?: string }) {
     const session = sessionStore((state: any) => state.session)
+
     return (
         <div className={cn("h-full grid grid-rows-12 shadow border rounded-md", `${props.className}`)}>
             <Card className="row-span-11 shadow-none border-none">
                 <CardHeader className="px-7">
                     <div className="flex justify-between">
                         <CardTitle>Üye Tablosu</CardTitle>
-                        {session?.role === 'sport_center' && <UserDialog title="Üye Ekle" />}
+                        <CustomerDialog title="Üye Ekle" />
                     </div>
                     <CardDescription>Salon ve Diyetisten İş Birliğine ait Üyeleri Buradan Görebilirsin</CardDescription>
                 </CardHeader>
