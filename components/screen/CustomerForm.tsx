@@ -1,24 +1,26 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+"use client"
 
+import { useEffect } from 'react';
+
+import { createCustomer } from '@/actions/customer.action';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { cn, showToast } from '@/lib/utils';
-import { createCustomer } from '@/actions/customer.action';
 import { useFormState, useFormStatus } from 'react-dom';
-import { getAllUsers } from '@/actions/user.action';
+import sessionStore from '@/store/session.store';
 
-export default function CustomerForm({ className }: { className?: string }) {
+export default function CustomerForm({ className, userList }: { className?: string, userList: any }) {
     const [state, action] = useFormState(createCustomer, undefined);
-    const data = getAllUsers();
+    const session = sessionStore((state) => state.session);
     useEffect(() => {
         if (state?.errors) {
             showToast(state.errors[Object.keys(state.errors)[0]][0], 'error')
         }
     }, [state?.errors])
+
+    if (state?.data) {
+        showToast(state.data.description, 'success', true)
+    }
 
     const formatPhoneNumber = (value: string) => {
         let formattedValue = value.replace(/[^0-9]/g, '').slice(0, 10);
@@ -59,25 +61,30 @@ export default function CustomerForm({ className }: { className?: string }) {
             <div>
                 <Input id="package_" name="package_" placeholder="Paket Ay Bilgisi 1-12" onChange={handlePackageChange} />
             </div>
-            <div>
-                <select id="userId" name="userId" className="w-full p-2 border border-gray-300 rounded-md">
-                    <option value="">Kullanıcı Seçiniz</option>
-                    <option value="1">Kullanıcı 1</option>
-                    <option value="2">Kullanıcı 2</option>
-                    <option value="3">Kullanıcı 3</option>
-                </select>
-            </div>
+            {session?.role === 'admin' && <UserSelect userList={userList} userId={session.id} />}
+            {session?.role === 'sport_center' && <input type="hidden" name="userId" value={session.id} />}
             <CreateCustomerButton />
         </form>
     );
 }
 
 export function CreateCustomerButton() {
-    const { pending } = useFormStatus();
-
+    const { pending, data } = useFormStatus();
     return (
         <Button aria-disabled={pending} type="submit" className={`mt-4 w-full ${pending ? 'opacity-80' : ''}`}>
             {pending ? 'Ekle...' : 'Ekle'}
         </Button>
     );
+}
+
+
+const UserSelect = ({ userList, userId }: { userList: any, userId: any }) => {
+    return <div>
+        <select id="userId" name="userId" className="w-full p-2 border border-gray-300 rounded-md">
+            <option value="">Kullanıcı Seçiniz</option>
+            {userList.map((user: any) => (
+                <option key={user.id} value={user.id}>{user.username}</option>
+            ))}
+        </select>
+    </div>
 }

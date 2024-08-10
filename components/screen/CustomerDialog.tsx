@@ -1,14 +1,17 @@
+"use server"
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import CustomerForm from "./CustomerForm";
+import { getAllUsers } from "@/actions/user.action";
 
-import UserForm from './CustomerForm'
 
-export default function CustomerDialog({ title }: { title: string }) {
+export default async function CustomerDialog({ title }: { title: string }) {
+    const userList = await getAllUsers()
     return (
         <Dialog>
             <DialogTrigger className="bg-black px-4 py-2 text-white rounded-md font-bold">{title}</DialogTrigger>
@@ -16,7 +19,7 @@ export default function CustomerDialog({ title }: { title: string }) {
                 <DialogHeader>
                     <DialogTitle className="mb-10">{title}</DialogTitle>
                 </DialogHeader>
-                <UserForm />
+                <CustomerForm userList={userList} />
             </DialogContent>
         </Dialog>
 

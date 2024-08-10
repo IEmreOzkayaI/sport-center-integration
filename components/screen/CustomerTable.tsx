@@ -1,4 +1,5 @@
-"use client"
+
+"use server"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -20,15 +21,17 @@ import { cn } from "@/lib/utils"
 import sessionStore from "@/store/session.store"
 import PaginationLine from "./PaginationLine"
 import CustomerDialog from "./CustomerDialog"
+import { getUser } from "@/actions/user.action"
+import { getCustomersByUserId } from "@/actions/customer.action"
+import CustomerStatus from "./CustomerStatus"
 
 
-
-export default function CustomerTable(props: { className?: string }) {
-    const session = sessionStore((state: any) => state.session)
+export default async function CustomerTable(props: { className?: string }) {
+    const customerList = await getCustomersByUserId();
 
     return (
         <div className={cn("h-full grid grid-rows-12 shadow border rounded-md", `${props.className}`)}>
-            <Card className="row-span-11 shadow-none border-none">
+            <Card className="row-span-11 shadow-none border-none overflow-y-scroll">
                 <CardHeader className="px-7">
                     <div className="flex justify-between">
                         <CardTitle>Üye Tablosu</CardTitle>
@@ -51,90 +54,19 @@ export default function CustomerTable(props: { className?: string }) {
                             </TableRow>
                         </TableHeader>
                         <TableBody className="h-full">
-                            <TableRow className="bg-accent">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="bg-accent">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="bg-accent">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="bg-accent">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow className="bg-accent">
-                                <TableCell>
-                                    <div className="font-medium">Liam Johnson</div>
-                                </TableCell>
-                                <TableCell className="hidden sm:table-cell">3 Aylık</TableCell>
-                                <TableCell className="hidden sm:table-cell">250 ₺</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge className="text-xs">
-                                        Pasif
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
+                            {customerList?.map((customer: any) => (
+                                <TableRow key={customer.id}>
+                                    <TableCell>
+                                        <div className="font-medium">{customer.fullName}</div>
+                                    </TableCell>
+                                    <TableCell className="hidden sm:table-cell">{customer.package}</TableCell>
+                                    <TableCell className="hidden md:table-cell">{customer.amount} ₺</TableCell>
+                                    <TableCell className="text-center">
+                                        <CustomerStatus customer={customer} />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+
                         </TableBody>
                     </Table>
                 </CardContent>

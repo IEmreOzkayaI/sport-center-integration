@@ -4,9 +4,9 @@ import "./globals.css";
 import Outline from "@/components/common/Outline";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
-import { getUser } from "@/actions/session.action";
 import Navbar from "@/components/common/Navbar";
 import { Toaster } from "sonner";
+import { getUser } from "@/actions/user.action";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
     const session = await getUser();
-    
+
     return (
         <html lang="en">
             <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>

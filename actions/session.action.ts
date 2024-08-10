@@ -3,11 +3,7 @@ import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SessionPayload, User } from '../definitions';
-import { users } from '@/lib/drizzle/schema';
-import { eq } from 'drizzle-orm';
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { SessionPayload } from '../definitions';
 
 const secretKey = process.env.SECRET_KEY;
 const key = new TextEncoder().encode(secretKey);
@@ -59,30 +55,6 @@ export function deleteSession() {
     cookies().delete('session');
     redirect('/home');
 }
-
-export const getUser = async (): Promise<User | null> => {
-    const session = await verifySession();
-    if (!session) return null;
-
-    try {
-        const data: User[] = await db.select().from(users).where(eq(users.id, session.id.toString()));
-        const user = data[0];
-
-        const formattedUser: User = {
-            id: user.id,
-            username: user.username,
-            role: user.role,
-            status: user.status,
-            phone: user.phone,
-        };
-
-        return formattedUser;
-    } catch (error) {
-        console.log('Failed to fetch user', error);
-        return null;
-    }
-};
-
 
 
 // export async function verifySession() {
