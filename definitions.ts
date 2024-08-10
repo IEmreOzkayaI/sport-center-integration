@@ -25,6 +25,16 @@ export type FormState =
     }
     | undefined;
 
+export type FormStateLogIn =
+    | {
+        errors?: {
+            username?: string[],
+            password?: string[],
+        };
+        message?: string;
+    }
+    | undefined;
+
 export type SessionPayload = {
     id: string | number;
     username: string;
