@@ -19,7 +19,7 @@ export const customers = pgTable('customers', {
   package: packageEnum('package').default('1'),
   status: statusEnum('status').default('pending'),
   userId: uuid('user_id').references(() => users.id),
-});
+ });
 
 export const notes = pgTable('notes', {
     id: uuid('id').primaryKey().defaultRandom(),

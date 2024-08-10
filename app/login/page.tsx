@@ -13,7 +13,7 @@ import Link from "next/link";
 export default function Page() {
     return (
         <div className="flex flex-col items-center justify-center w-full h-screen">
-            <Link href="/dashboard" className="absolute top-0 left-0 p-4 bg-black text-white m-3 rounded-md">
+            <Link href="/home" className="absolute top-0 left-0 p-4 bg-black text-white m-3 rounded-md">
                 <ArrowLeftIcon />
             </Link>
             <Card className="mx-auto max-w-sm">
