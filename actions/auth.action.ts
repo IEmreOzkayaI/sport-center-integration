@@ -1,12 +1,12 @@
 'use server';
 
-import { FormState, LoginFormSchema, SignupFormSchema } from '@/definitions';
+import { FormState, FormStateLogIn, LoginFormSchema, SignupFormSchema } from '@/definitions';
 import db from '@/lib/db';
 import { users } from '@/lib/drizzle/schema';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { createSession, deleteSession } from './session.action';
-export async function signup(state: FormState, formData: FormData): Promise<FormState> {
+export async function signup(state: FormStateLogIn, formData: FormData): Promise<FormState> {
     // 1. Validate form fields
     const validatedFields = SignupFormSchema.safeParse({
         username: formData.get('username'),
@@ -89,4 +89,3 @@ export async function login(state: FormState, formData: FormData,): Promise<Form
 export async function logout() {
     deleteSession();
 }
-
