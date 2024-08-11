@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export const showToast = (message: string, key: string, isReload = false) => {
+export const showToast = (message: any, key: string, isReload = false) => {
     toast.dismiss();
     if (key === 'error') {
         toast.error(message, {
