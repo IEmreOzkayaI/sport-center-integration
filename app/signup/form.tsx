@@ -12,10 +12,12 @@ export function SignupForm() {
     const [state, action] = useFormState(signup, undefined);
 
     useEffect(() => {
-        if (state?.errors) {
-            showToast(state.errors[Object.keys(state.errors)[0]][0], 'error')
+        if (state && 'errors' in state && state.errors) {
+            const errorKey = Object.keys(state.errors)[0] as keyof typeof state.errors;
+            showToast(state.errors[errorKey]?.[0], 'error');
         }
-    }, [state?.errors])
+    }, [state]);
+
 
     const formatPhoneNumber = (value: string) => {
         let formattedValue = value.replace(/[^0-9]/g, '').slice(0, 10)
