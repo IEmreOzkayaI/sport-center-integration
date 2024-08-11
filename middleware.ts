@@ -19,6 +19,10 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/home', req.nextUrl));
     }
 
+    if (path === '/home' && session?.id) {
+        return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
+    }
+
     if (isProtectedRoute && !session?.id) {
         return NextResponse.redirect(new URL('/login', req.nextUrl));
     }

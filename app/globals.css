@@ -72,3 +72,9 @@ input:-webkit-autofill {
     -webkit-background-clip: text;
     -webkit-text-fill-color: #000000 !important;
   }
+
+  input,select {
+    appearance:none !important;
+    outline:none !important
+  }
+

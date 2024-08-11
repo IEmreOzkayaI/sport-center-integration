@@ -67,3 +67,13 @@ export const CreateCustomerFormSchema = z.object({
     package_: z.enum(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']),
     userId: z.string().min(1, "Kullanıcı Seçiniz"),
 })
+
+
+
+export type Response = {
+    data: {
+        status: number;
+        description: string;
+        result: any;
+    }
+}
