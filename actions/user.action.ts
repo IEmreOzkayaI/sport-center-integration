@@ -24,7 +24,7 @@ export const getUser = async (): Promise<User | null> => {
     if (!session) return null;
 
     try {
-        const data: any = await db.select().from(users).where(eq(users.id, session.id.toString()));
+        const data: any = await db.select().from(users).where(eq(users.id, (session.id as string).toString()));
         const user = data[0];
 
         const formattedUser: User = {

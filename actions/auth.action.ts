@@ -6,7 +6,7 @@ import { users } from '@/lib/drizzle/schema';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { createSession, deleteSession } from './session.action';
-export async function signup(state: FormStateLogIn, formData: FormData): Promise<FormState> {
+export async function signup(state: FormState, formData: FormData): Promise<FormState> {
     // 1. Validate form fields
     const validatedFields = SignupFormSchema.safeParse({
         username: formData.get('username'),
@@ -51,7 +51,7 @@ export async function signup(state: FormStateLogIn, formData: FormData): Promise
     return {};
 }
 
-export async function login(state: FormState, formData: FormData,): Promise<FormState | { message: string }> {
+export async function login(state: FormStateLogIn, formData: FormData,): Promise<FormStateLogIn | { message: string }> {
     // 1. Validate form fields
     const validatedFields = LoginFormSchema.safeParse({
         username: formData.get('username'),
