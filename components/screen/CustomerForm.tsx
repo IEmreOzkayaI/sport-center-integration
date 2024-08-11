@@ -8,6 +8,14 @@ import { Input } from '@/components/ui/input';
 import { cn, showToast } from '@/lib/utils';
 import sessionStore from '@/store/session.store';
 import { useFormState, useFormStatus } from 'react-dom';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
 
 export default function CustomerForm({ className, userList }: { className?: string, userList: any }) {
     const [state, action] = useFormState(createCustomer, undefined);
@@ -59,9 +67,23 @@ export default function CustomerForm({ className, userList }: { className?: stri
                 <Input id="phone" type="text" name="phone" placeholder="(537) 122 12 12"
                     onChange={handlePhoneChange} onKeyDown={handlePhoneKeyDown} />
             </div>
-            <div>
+            {/* <div>
                 <Input id="package_" name="package_" placeholder="Paket Ay Bilgisi 1-12" onChange={handlePackageChange} />
-            </div>
+            </div> */}
+            <Select name="package_">
+                <SelectTrigger className="w-full outline-none focus:ring-none focus:outline-none">
+                    <SelectValue className="text-xl" placeholder="Paket Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem value="1">1 Ay</SelectItem>
+                        <SelectItem value="3">3 Ay</SelectItem>
+                        <SelectItem value="6">6 Ay</SelectItem>
+                        <SelectItem value="9">9 Ay</SelectItem>
+                        <SelectItem value="12">12 Ay</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
             {session?.role === 'admin' && <UserSelect userList={userList} userId={session.id} />}
             {session?.role === 'sport_center' && <input type="hidden" name="userId" value={session.id} />}
             <CreateCustomerButton />
@@ -81,11 +103,23 @@ export function CreateCustomerButton() {
 
 const UserSelect = ({ userList, userId }: { userList: any, userId: any }) => {
     return <div>
-        <select id="userId" name="userId" className="w-full p-2 border border-gray-300 rounded-md">
+        {/* <select id="userId" name="userId" className="w-full p-2 border border-gray-300 rounded-md">
             <option value="">Kullanıcı Seçiniz</option>
             {userList.map((user: any) => (
                 <option key={user.id} value={user.id}>{user.username}</option>
             ))}
-        </select>
+        </select> */}
+        <Select name="userId">
+            <SelectTrigger className="w-full outline-none focus:ring-none focus:outline-none">
+                <SelectValue className="text-xl" placeholder="Salon Seçiniz" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    {userList.map((user: any) => (
+                        <SelectItem key={user.id} value={user.id}>{user.username}</SelectItem>
+                    ))}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     </div>
 }

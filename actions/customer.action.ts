@@ -22,8 +22,6 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
         userId: formData.get('userId'),
     });
 
-    console.log(formData.get('userId'));
-
     // If any form fields are invalid, return early
     if (!validatedFields.success) {
         return { errors: validatedFields.error.flatten().fieldErrors as CreateCustomerFormState };

@@ -4,9 +4,9 @@ import "./globals.css";
 import Outline from "@/components/common/Outline";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
-import Navbar from "@/components/common/Navbar";
 import { Toaster } from "sonner";
 import { getUser } from "@/actions/user.action";
+import Navbar from "@/components/common/Navbar";
 
 const fontSans = FontSans({
     subsets: ["latin"],
