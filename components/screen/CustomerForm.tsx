@@ -6,12 +6,13 @@ import { createCustomer } from '@/actions/customer.action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn, showToast } from '@/lib/utils';
-import { useFormState, useFormStatus } from 'react-dom';
 import sessionStore from '@/store/session.store';
+import { useFormState, useFormStatus } from 'react-dom';
 
 export default function CustomerForm({ className, userList }: { className?: string, userList: any }) {
     const [state, action] = useFormState(createCustomer, undefined);
-    const session = sessionStore((state) => state.session);
+    const session = sessionStore((state: any) => state.session);
+
     useEffect(() => {
         if (state?.errors) {
             showToast(state.errors[Object.keys(state.errors)[0]][0], 'error')

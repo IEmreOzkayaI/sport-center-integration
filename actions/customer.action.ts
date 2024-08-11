@@ -1,12 +1,14 @@
 'use server';
 
-import { CreateCustomerFormSchema, CreateCustomerFormState } from "@/definitions";
+import {
+    CreateCustomerFormSchema, CreateCustomerFormState,
+
+} from "@/definitions";
 import db from "@/lib/db";
-import { customers, packageEnum } from "@/lib/drizzle/schema";
-import { verifySession } from "./session.action";
-import { eq } from "drizzle-orm";
+import { customers } from "@/lib/drizzle/schema";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { gt, lt, and } from "drizzle-orm";
+import { verifySession } from "./session.action";
 
 export async function createCustomer(state: CreateCustomerFormState, formData: FormData): Promise<any> {
 
@@ -59,7 +61,7 @@ export async function getCustomersByUserId(): Promise<any[] | null> {
             const data = await db.select().from(customers);
             return data;
         } else {
-            const data = await db.select().from(customers).where(eq(customers.userId, session.id));
+            const data = await db.select().from(customers).where(eq(customers.userId, session.id as string));
             return data;
         }
     } catch (error) {
@@ -69,7 +71,7 @@ export async function getCustomersByUserId(): Promise<any[] | null> {
 }
 
 
-export async function updateCustomerStatus(customerId: string, status: string): Promise<UpdateResult | null> {
+export async function updateCustomerStatus(customerId: string, status: string): Promise<any | null> {
     const session = await verifySession();
     if (!session) {
         console.log('No session found');
@@ -79,18 +81,13 @@ export async function updateCustomerStatus(customerId: string, status: string): 
     try {
         const data = await db
             .update(customers)
-            .set({ status })
+            .set({ status: status as "active" | "inactive" | "pending" | null | undefined })
             .where(
                 and(
                     eq(customers.id, customerId),
-                    eq(customers.userId, session.id)
+                    eq(customers.userId, session.id as string)
                 )
             );
-
-        if (data.affectedRows === 0) {
-            console.warn('No rows were updated, check if the customer ID and session are correct');
-            return null;
-        }
 
         return data;
     } catch (error) {
