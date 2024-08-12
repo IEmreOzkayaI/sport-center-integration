@@ -51,30 +51,30 @@ export async function createPackage(state: PackageFormState, formData: FormData)
     try {
         const packageAlreadyExists = await db.select().from(packages).where(
             and(
-                eq(packages.userId, session.id),
-                eq(packages.duration, duration),
+                eq(packages.userId, session.id as string),
+                eq(packages.duration, duration as "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12"),
                 isNull(packages.deletedAt)
             )).execute();
 
-            if (packageAlreadyExists.length > 0) {
-                return {
-                    data: {
-                        status: 400,
-                        description: "Bu paket için zaten bir fiyat girilmiş.",
-                        result: null,
-                    }
-                };
-            }
+        if (packageAlreadyExists.length > 0) {
+            return {
+                data: {
+                    status: 400,
+                    description: "Bu paket için zaten bir fiyat girilmiş.",
+                    result: null,
+                }
+            };
+        }
     } catch (e) {
         console.log('Failed to check if package already exists', e);
-        return ;
-     }
+        return null;
+    }
 
     try {
         const packageData = await db.insert(packages).values({
             price: price.replace('.', ''),
-            duration,
-            userId: session.id,
+            duration: duration as "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12",
+            userId: session.id as string,
         }).returning({ userId: users.id, price: packages.price, duration: packages.duration, id: packages.id });
 
         const package_ = packageData[0];

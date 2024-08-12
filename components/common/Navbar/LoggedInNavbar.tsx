@@ -6,7 +6,7 @@ import { UserMenu } from "./SubComponents";
 
 
 export default function LoggedInNavbar({ session, handleLogout }: { session: any, handleLogout: any }) {
-    return <header className="border text-white rounded-md mb-4 md:-mb-8">
+    return <header className="border text-white rounded-md mb-4 row-span-1">
         <div className="px-16 mx-auto flex justify-between items-center py-3">
             <Image src='/logo.png' alt='logo' width={36} height={36} className='rounded-md' />
             <UserMenu session={session} />

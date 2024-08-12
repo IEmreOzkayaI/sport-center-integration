@@ -39,7 +39,7 @@ export const notes = pgTable('notes', {
 
 export const packages = pgTable('packages', {
     id: uuid('id').primaryKey().defaultRandom(),
-    price: text('price'),
+    price: text('price').default('0').notNull(),
     duration: packageEnum('duration').default('1'),
     status: statusEnum('status').default('active'),
     userId: uuid('user_id').references(() => users.id),
