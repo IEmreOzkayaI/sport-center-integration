@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { createPackage, deletePackage, getPackagesByUserId } from "@/actions/package.action";
@@ -55,7 +56,7 @@ export const PackageMenu = () => {
 }
 
 
-export const PackageForm = ({ setPackages, packages }) => {
+export const PackageForm = ({ setPackages, packages }: { setPackages: any, packages: any }) => {
     const [state, action] = useFormState(createPackage, undefined);
     const [price, setPrice] = useState('');
 
@@ -65,7 +66,6 @@ export const PackageForm = ({ setPackages, packages }) => {
             showToast(state.errors[errorKey]?.[0], 'error', false);
         }
         if (state?.data.status === 201) {
-            console.log('Paket oluşturuldu', state.data);
 
             setPrice('');
             const sorted = [...packages, state.data.result].sort((a, b) => a.duration - b.duration);
@@ -73,7 +73,6 @@ export const PackageForm = ({ setPackages, packages }) => {
             showToast(state.data.description, 'success', false);
         }
         if (state?.data.status === 400) {
-            console.log('Paket oluşturulamadı', state.data);
             showToast(state.data.description, 'error', false);
         }
     }, [state]);
@@ -142,14 +141,12 @@ export const MenuPackageList = ({ packages, setPackages }) => {
     }, []);
 
     const handlePackageDelete = async (id) => {
-        console.log('Paket silme işlemi yapılacak');
         const response = await deletePackage(id);
         if (!response) return;
 
         showToast('Paket başarıyla silindi.', 'success', false);
         const packages = await getPackagesByUserId();
         if (!packages) return;
-        console.log('Paket silme', packages);
         setPackages(packages.data.result);
     }
 

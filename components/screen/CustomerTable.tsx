@@ -24,14 +24,15 @@ import CustomerDialog from "./CustomerDialog"
 import { getUser } from "@/actions/user.action"
 import { getCustomersByUserId } from "@/actions/customer.action"
 import CustomerStatus from "./CustomerStatus"
+import CustomerTableRow from "./CustomerTableRow"
 
 
 export default async function CustomerTable(props: { className?: string }) {
-    const customerList = await getCustomersByUserId();
+    const customerAndInvoiceList = await getCustomersByUserId();
 
     return (
         <div className={cn("h-full grid grid-rows-12 shadow border rounded-md", `${props.className}`)}>
-            <Card className="row-span-11 shadow-none border-none overflow-y-scroll">
+            <Card className="row-span-11 shadow-none border-none">
                 <CardHeader className="px-7">
                     <div className="flex justify-between">
                         <CardTitle>Üye Tablosu</CardTitle>
@@ -43,10 +44,10 @@ export default async function CustomerTable(props: { className?: string }) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Ad Soyad</TableHead>
-                                <TableHead className="hidden sm:table-cell">Paket</TableHead>
-                                <TableHead className="hidden md:table-cell">Ücret</TableHead>
                                 <TableHead className="text-center">Statü</TableHead>
+                                <TableHead className="text-center">Ad Soyad</TableHead>
+                                <TableHead className="hidden sm:table-cell text-center">Paket</TableHead>
+                                <TableHead className="hidden md:table-cell text-center">Telefon</TableHead>
                                 {/* <TableHead className="hidden sm:table-cell">Telefon</TableHead>
                             <TableHead className="hidden md:table-cell">Başlangıç</TableHead>
                             <TableHead className="hidden md:table-cell">Bitiş</TableHead>
@@ -54,19 +55,7 @@ export default async function CustomerTable(props: { className?: string }) {
                             </TableRow>
                         </TableHeader>
                         <TableBody className="h-full">
-                            {customerList?.map((customer: any) => (
-                                <TableRow key={customer.id}>
-                                    <TableCell>
-                                        <div className="font-medium">{customer.fullName}</div>
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell">{customer.package}</TableCell>
-                                    <TableCell className="hidden md:table-cell">{customer.amount} ₺</TableCell>
-                                    <TableCell className="text-center">
-                                        <CustomerStatus customer={customer} />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-
+                            <CustomerTableRow customerAndInvoiceList={customerAndInvoiceList} />
                         </TableBody>
                     </Table>
                 </CardContent>

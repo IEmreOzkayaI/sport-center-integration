@@ -5,8 +5,14 @@ import {
     ChevronRight,
     Copy,
     CreditCard,
+    DeleteIcon,
     MoreVertical,
+    PhoneCall,
+    PhoneIcon,
+    PhoneOutgoing,
+    TrashIcon,
     Truck,
+    User,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -31,160 +37,150 @@ import {
     PaginationItem,
 } from "@/components/ui/pagination"
 import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
+import { cn, showToast } from "@/lib/utils"
+import customerStore from "@/store/customer.store"
+import { custom } from "zod"
+import sessionStore from "@/store/session.store"
+import { deleteCustomerById } from "@/actions/customer.action"
 
 export default function CustomerDetail(props: { className?: string }) {
+    const customerDetail = customerStore((state: any) => state.customer)
+    const clearCustomerDetail = customerStore((state: any) => state.clearCustomer)
+    const session = sessionStore((state: any) => state.session)
+    const handleDelete = async (customerId: string) => {
+        const response = await deleteCustomerById(customerId);
+        if (response.data.status === 200) {
+            clearCustomerDetail()
+            showToast(response.data.description, 'success', false)
+        }
+
+    }
     return (
-        <Card className={cn("overflow-hidden", props.className)}>
-            <CardHeader className="flex flex-row items-start bg-muted/50">
-                <div className="grid gap-0.5">
-                    <CardTitle className="group flex items-center gap-2 text-lg">
-                        Order Oe31b70H
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                        >
-                            <Copy className="h-3 w-3" />
-                            <span className="sr-only">Copy Order ID</span>
-                        </Button>
-                    </CardTitle>
-                    <CardDescription>Date: November 23, 2023</CardDescription>
-                </div>
-                <div className="ml-auto flex items-center gap-1">
-                    <Button size="sm" variant="outline" className="h-8 gap-1">
-                        <Truck className="h-3.5 w-3.5" />
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                            Track Order
-                        </span>
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="outline" className="h-8 w-8">
-                                <MoreVertical className="h-3.5 w-3.5" />
-                                <span className="sr-only">More</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Export</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Trash</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </CardHeader>
-            <CardContent className="p-6 text-sm">
-                <div className="grid gap-3">
-                    <div className="font-semibold">Order Details</div>
-                    <ul className="grid gap-3">
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">
-                                Glimmer Lamps x <span>2</span>
-                            </span>
-                            <span>$250.00</span>
-                        </li>
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">
-                                Aqua Filters x <span>1</span>
-                            </span>
-                            <span>$49.00</span>
-                        </li>
-                    </ul>
-                    <Separator className="my-2" />
-                    <ul className="grid gap-3">
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Subtotal</span>
-                            <span>$299.00</span>
-                        </li>
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Shipping</span>
-                            <span>$5.00</span>
-                        </li>
-                        <li className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Tax</span>
-                            <span>$25.00</span>
-                        </li>
-                        <li className="flex items-center justify-between font-semibold">
-                            <span className="text-muted-foreground">Total</span>
-                            <span>$329.00</span>
-                        </li>
-                    </ul>
-                </div>
-                <Separator className="my-4" />
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-3">
-                        <div className="font-semibold">Shipping Information</div>
-                        <address className="grid gap-0.5 not-italic text-muted-foreground">
-                            <span>Liam Johnson</span>
-                            <span>1234 Main St.</span>
-                            <span>Anytown, CA 12345</span>
-                        </address>
+        <>
+            {customerDetail?.customers?.id && (
+                <Card className={cn("overflow-hidden h-full flex flex-col justify-between", props.className)}>
+                    <div>
+                        <CardHeader className="flex flex-row items-start bg-muted/50">
+                            <div className="grid gap-0.5">
+                                <CardTitle className="group flex items-center gap-2 text-lg">
+                                    {customerDetail.customers.fullName}
+                                    <Button
+                                        size="icon"
+                                        variant="outline"
+                                        className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                                    >
+                                        <Copy className="h-3 w-3" />
+                                        <span className="sr-only">Copy Order ID</span>
+                                    </Button>
+                                </CardTitle>
+                                <CardDescription>{" "}
+                                    {("0" + new Date(customerDetail.invoices.packageStartDate).getDate()).slice(-2)}.
+                                    {("0" + (new Date(customerDetail.invoices.packageStartDate).getMonth() + 1)).slice(-2)}.
+                                    {new Date(customerDetail.invoices.packageStartDate).getFullYear()}
+                                    {" "}
+                                    -
+                                    {" "}
+                                    {("0" + new Date(customerDetail.invoices.packageEndDate).getDate()).slice(-2)}.
+                                    {("0" + (new Date(customerDetail.invoices.packageEndDate).getMonth() + 1)).slice(-2)}.
+                                    {new Date(customerDetail.invoices.packageEndDate).getFullYear()}
+                                </CardDescription>
+                            </div>
+                            <div className="ml-auto flex items-center gap-1">
+                                <Button size="sm" variant="outline" className="h-8 gap-1">
+                                    <TrashIcon className="h-3.5 w-3.5" onClick={() => handleDelete(customerDetail.customers.id)} />
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-6 text-sm">
+                            <div className="grid gap-3">
+                                <div className="font-semibold">Üye Detayı</div>
+                                <ul className="grid gap-3">
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">
+                                            Ad Soyad
+                                        </span>
+                                        {customerDetail.customers.fullName}
+
+                                    </li>
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground flex">
+                                            Telefon
+                                        </span>
+                                        {customerDetail.customers.phone}
+                                    </li>
+                                </ul>
+                                <Separator className="my-2" />
+                                <div className="font-semibold">Paket Detayı</div>
+                                <ul className="grid gap-3">
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Paket Süresi</span>
+                                        <span>{customerDetail.invoices.packageName} Ay</span>
+                                    </li>
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Paket Başlangıç Tarihi</span>
+                                        <span>
+                                            {("0" + new Date(customerDetail.invoices.packageStartDate).getDate()).slice(-2)}.
+                                            {("0" + (new Date(customerDetail.invoices.packageStartDate).getMonth() + 1)).slice(-2)}.
+                                            {new Date(customerDetail.invoices.packageStartDate).getFullYear()}
+                                        </span>
+                                    </li>
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Paket Bitiş Tarihi</span>
+                                        <span>
+                                            {("0" + new Date(customerDetail.invoices.packageEndDate).getDate()).slice(-2)}.
+                                            {("0" + (new Date(customerDetail.invoices.packageEndDate).getMonth() + 1)).slice(-2)}.
+                                            {new Date(customerDetail.invoices.packageEndDate).getFullYear()}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <Separator className="my-4" />
+                            <div className="font-semibold">Kazanç Detayı</div>
+                            <ul className="grid gap-3 mt-2">
+                                <li className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Spor Salonu</span>
+                                    <span>{customerDetail.invoices.sportCenterName}</span>
+                                </li>
+                                {session.role === 'admin' && (
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Diyetisyen Ücreti</span>
+                                        <span>{customerDetail.invoices.adminPrice} ₺</span>
+                                    </li>
+                                )}
+                                <li className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Salon Ücreti</span>
+                                    <span>{customerDetail.invoices.sportCenterPrice} ₺</span>
+                                </li>
+                                <li className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Salon Komisyonu</span>
+                                    <span>%{customerDetail.invoices.commissionPercentage} </span>
+                                </li>
+                                <li className="flex items-center justify-between">
+                                    <span className="text-muted-foreground">Salon Kazancı</span>
+                                    <span>{(Number(customerDetail.invoices.sportCenterPrice) * Number(customerDetail.invoices.commissionPercentage)) / 100} ₺</span>
+                                </li>
+                                {session.role === 'admin' && (
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Diyetisyen Kazancı</span>
+                                        <span>{Number(customerDetail.invoices.adminPrice) - (Number(customerDetail.invoices.sportCenterPrice) * Number(customerDetail.invoices.commissionPercentage)) / 100} ₺</span>
+                                    </li>
+                                )}
+
+                            </ul>
+                        </CardContent>
                     </div>
-                    <div className="grid auto-rows-max gap-3">
-                        <div className="font-semibold">Billing Information</div>
-                        <div className="text-muted-foreground">
-                            Same as shipping address
-                        </div>
-                    </div>
-                </div>
-                <Separator className="my-4" />
-                <div className="grid gap-3">
-                    <div className="font-semibold">Customer Information</div>
-                    <dl className="grid gap-3">
-                        <div className="flex items-center justify-between">
-                            <dt className="text-muted-foreground">Customer</dt>
-                            <dd>Liam Johnson</dd>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <dt className="text-muted-foreground">Email</dt>
-                            <dd>
-                                <a href="mailto:">liam@acme.com</a>
-                            </dd>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <dt className="text-muted-foreground">Phone</dt>
-                            <dd>
-                                <a href="tel:">+1 234 567 890</a>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-                <Separator className="my-4" />
-                <div className="grid gap-3">
-                    <div className="font-semibold">Payment Information</div>
-                    <dl className="grid gap-3">
-                        <div className="flex items-center justify-between">
-                            <dt className="flex items-center gap-1 text-muted-foreground">
-                                <CreditCard className="h-4 w-4" />
-                                Visa
-                            </dt>
-                            <dd>**** **** **** 4532</dd>
-                        </div>
-                    </dl>
-                </div>
-            </CardContent>
-            <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-                <div className="text-xs text-muted-foreground">
-                    Updated <time dateTime="2023-11-23">November 23, 2023</time>
-                </div>
-                <Pagination className="ml-auto mr-0 w-auto">
-                    <PaginationContent>
-                        <PaginationItem>
-                            <Button size="icon" variant="outline" className="h-6 w-6">
-                                <ChevronLeft className="h-3.5 w-3.5" />
-                                <span className="sr-only">Previous Order</span>
-                            </Button>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <Button size="icon" variant="outline" className="h-6 w-6">
-                                <ChevronRight className="h-3.5 w-3.5" />
-                                <span className="sr-only">Next Order</span>
-                            </Button>
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            </CardFooter>
-        </Card>
+                    <CardFooter className="border-t bg-muted/50 px-6 py-3 flex items-center justify-center text-sm text-muted-foreground">
+                        Müşteri Detay Kartı
+                    </CardFooter>
+                </Card>)}
+            {!customerDetail?.customers?.id && (
+                <Card className={cn("overflow-hidden", props.className)}>
+                    <CardHeader className="w-full h-full flex items-center justify-center bg-muted/20">
+                        Üye Seçiniz
+                    </CardHeader>
+                </Card>
+            )}
+        </>
+
     )
 }

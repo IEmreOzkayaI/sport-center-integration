@@ -20,7 +20,6 @@ import {
 export default function CustomerForm({ className, userList }: { className?: string, userList: any }) {
     const [state, action] = useFormState(createCustomer, undefined);
     const session = sessionStore((state: any) => state.session);
-
     useEffect(() => {
         if (state?.errors) {
             showToast(state.errors[Object.keys(state.errors)[0]][0], 'error')
@@ -28,7 +27,12 @@ export default function CustomerForm({ className, userList }: { className?: stri
     }, [state?.errors])
 
     if (state?.data) {
-        showToast(state.data.description, 'success', true)
+        if (state.data.status === 201) {
+            showToast(state.data.description, 'success', true)
+        }
+        if (state.data.status === 400) {
+            showToast(state.data.description, 'error', false)
+        }
     }
 
     const formatPhoneNumber = (value: string) => {
