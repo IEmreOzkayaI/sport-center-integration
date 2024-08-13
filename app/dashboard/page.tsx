@@ -22,7 +22,7 @@ export default async function Home() {
                 md:row-span-11 gap-y-6
                 ">
             <div className="
-                flex gap-4 flex-wrap justify-between items-center mb-5 max-h-full
+                flex gap-4 flex-wrap justify-between items-center max-h-full
                 sm:flex sm:gap-1 sm:flex-wrap sm:justify-evenly sm:items-center sm:my-auto sm:row-span-1
                 md:flex md:gap-10 md:flex-nowrap md:justify-evenly md:items-center md:my-auto md:row-span-1
                 ">

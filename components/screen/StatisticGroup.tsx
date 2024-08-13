@@ -26,7 +26,7 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
             )}
 
             {(userStatisticIndex === 0 || userStatisticIndex === null) && (
-                <span onClick={() => handleUserStatisticIndex(1)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleUserStatisticIndex(1)} className="w-full cursor-pointer">
                     <StatisticCard
                         title={TOTAL_MEMBER_AMOUNT}
                         value={totalMemberAmount?.data?.result?.length}
@@ -37,7 +37,7 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
 
             )}
             {(userStatisticIndex === 1 || userStatisticIndex === null) && (
-                <span onClick={() => handleUserStatisticIndex(2)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleUserStatisticIndex(2)} className="w-full cursor-pointer">
                     <StatisticCard
                         title={TOTAL_ACTIVE_MEMBER}
                         value={activeMemberAmount?.data?.result?.length}
@@ -47,7 +47,7 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
                 </span>
             )}
             {(userStatisticIndex === 2 || userStatisticIndex === null) && (
-                <span onClick={() => handleUserStatisticIndex(3)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleUserStatisticIndex(3)} className="w-full cursor-pointer">
                     <StatisticCard
                         title={TOTAL_INACTIVE_MEMBER}
                         value={inActiveMemberAmount?.data?.result?.length}
@@ -57,7 +57,7 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
                 </span>
             )}
             {(userStatisticIndex === 3 || userStatisticIndex === null) && (
-                <span onClick={() => handleUserStatisticIndex(0)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleUserStatisticIndex(0)} className="w-full cursor-pointer">
                     <StatisticCard
                         title={TOTAL_PENDING_MEMBER}
                         value={pendingMemberAmount?.data?.result?.length}
@@ -69,12 +69,12 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
 
 
             {(profitStatisticIndex === 0 || profitStatisticIndex === null) && (
-                <span onClick={() => handleProfitStatisticIndex(1)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleProfitStatisticIndex(1)} className="w-full cursor-pointer">
                     <StatisticCard title={TOTAL_PROFIT} value={`${totalProfit?.data.result.totalProfit.toFixed(2)} ₺`} icon={<CreditCard className="h-4 w-4 text-muted-foreground" />} subText={FROM_OLD_TO_NOW} />
                 </span>
             )}
             {(profitStatisticIndex === 1 || profitStatisticIndex === null) &&
-                <span onClick={() => handleProfitStatisticIndex(0)} className="w-auto md:w-full cursor-pointer">
+                <span onClick={() => handleProfitStatisticIndex(0)} className="w-full cursor-pointer">
                     <StatisticCard title={TOTAL_ACTIVE_PROFIT} value={`${totalProfit?.data.result.totalActiveProfit.toFixed(2)} ₺`} icon={<Activity className="h-4 w-4 text-muted-foreground" />} subText={NOW} />
                 </span>
             }
