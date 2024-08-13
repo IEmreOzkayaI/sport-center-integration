@@ -38,7 +38,7 @@ export default async function CustomerTable(props: { className?: string }) {
                         <CardTitle>Üye Tablosu</CardTitle>
                         <CustomerDialog title="Üye Ekle" />
                     </div>
-                    <CardDescription>Salon ve Diyetisten İş Birliğine ait Üyeleri Buradan Görebilirsin</CardDescription>
+                    <CardDescription>Salon ve Diyetisyen İş Birliğine ait Üyeleri Buradan Görebilirsin</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
