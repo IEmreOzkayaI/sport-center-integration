@@ -6,7 +6,7 @@ import { users } from '@/lib/drizzle/schema';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { createSession, deleteSession } from './session.action';
-export async function signup(state: FormState, formData: FormData): Promise<FormState> {
+export async function signup(state: FormState, formData: FormData): Promise<FormState | any> {
     // 1. Validate form fields
     const validatedFields = SignupFormSchema.safeParse({
         username: formData.get('username'),
@@ -24,7 +24,7 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
     // 3. Check if the user's email already exists
     const existingUser = await db.select().from(users).where(eq(users.username, username));
 
-    if (existingUser.length > 0) return { message: 'Username already exists, please use a different username or login.' };
+    if (existingUser.length > 0) return { data: { status: 400, description: 'Bu Kullanıcı adı zaten kullanımda', result: null } };
 
     // Hash the user's password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,23 +41,21 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 
     const user = data[0];
 
-    if (!user) return { message: 'An error occurred while creating your account.' };
+    if (!user) return { data: { status: 400, description: 'Kullanıcı oluşturulamadı', result: null } };
 
     // 4. Create a session for the user
     const id = user.id.toString();
     const role = 'sport_center';
     await createSession({ id, username, role });
-
-    return {};
+    return { data: { status: 201, description: 'Kullanıcı başarıyla oluşturuldu', result: null } };
 }
 
-export async function login(state: FormStateLogIn, formData: FormData,): Promise<FormStateLogIn | { message: string }> {
+export async function login(state: FormStateLogIn, formData: FormData,): Promise<FormStateLogIn | any> {
     // 1. Validate form fields
     const validatedFields = LoginFormSchema.safeParse({
         username: formData.get('username'),
         password: formData.get('password'),
     });
-    const errorMessage = { message: 'Invalid login credentials.' };
 
     // If any form fields are invalid, return early
     if (!validatedFields.success) return { errors: validatedFields.error.flatten().fieldErrors };
@@ -66,7 +64,7 @@ export async function login(state: FormStateLogIn, formData: FormData,): Promise
     const userData = await db.select().from(users).where(eq(users.username, validatedFields.data.username));
     const user = userData[0];
     // If user is not found, return early
-    if (!user) return errorMessage;
+    if (!user) return { data: { status: 400, description: 'Kullanıcı bulunamadı', result: null } };
 
     // 3. Compare the user's password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(
@@ -75,7 +73,7 @@ export async function login(state: FormStateLogIn, formData: FormData,): Promise
     );
 
     // If the password does not match, return early
-    if (!passwordMatch) return errorMessage;
+    if (!passwordMatch) return { data: { status: 400, description: 'Şifre yanlış', result: null } };
 
     // 4. If login successful, create a session for the user and redirect
     const id = user.id?.toString() ?? '';
@@ -83,7 +81,7 @@ export async function login(state: FormStateLogIn, formData: FormData,): Promise
     const username = user.username ?? '';
     await createSession({ id, username, role });
 
-    return { message: 'Login successful' };
+    return { data: { status: 200, description: 'Giriş başarılı', result: null } };
 }
 
 export async function logout() {

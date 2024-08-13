@@ -18,6 +18,16 @@ export function LoginForm() {
         }
     }, [state]);
 
+    if (state?.data) {
+        if (state.data.status === 201) {
+            showToast(state.data.description, 'success', true)
+        }
+        if (state.data.status === 400) {
+            showToast(state.data.description, 'error', false)
+        }
+    }
+
+
 
     return (
         <form action={action}>

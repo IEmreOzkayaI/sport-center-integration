@@ -47,7 +47,7 @@ export const PackageMenu = () => {
         <PopoverTrigger className="text-center">
             <span className="">Paket</span>
         </PopoverTrigger>
-        <PopoverContent className="mt-2 w-96">
+        <PopoverContent className="mt-4 w-80 sm:w-96">
             <PlusIcon className="border w-full rounded-md mb-4" onClick={() => setOpenPackageForm(prev => !prev)} />
             {openPackageForm && <PackageForm setPackages={setPackages} packages={packages} />}
             <MenuPackageList packages={packages} setPackages={setPackages} />
