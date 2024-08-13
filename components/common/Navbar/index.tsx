@@ -22,8 +22,8 @@ export default function Navbar({ session }: { session: any }) {
     }
 
     const handleLogout = async () => {
-        clearSession();
         await logout();
+        clearSession();
     }
 
     if (!session) return <LoggedOutNavbar />

@@ -108,6 +108,15 @@ export default function CustomerDetail(props: { className?: string }) {
                                         </span>
                                         {customerDetail.customers.phone}
                                     </li>
+                                    <li className="flex items-center justify-between">
+                                        <span className="text-muted-foreground flex">
+                                            Statü
+                                        </span>
+                                        {customerDetail.customers.status === 'active' && 'Aktif'}
+                                        {customerDetail.customers.status === 'inactive' && 'Pasif'}
+                                        {customerDetail.customers.status === 'pending' && 'Talep'}
+
+                                    </li>
                                 </ul>
                                 <Separator className="my-2" />
                                 <div className="font-semibold">Paket Detayı</div>
@@ -141,7 +150,7 @@ export default function CustomerDetail(props: { className?: string }) {
                                     <span className="text-muted-foreground">Spor Salonu</span>
                                     <span>{customerDetail.invoices.sportCenterName}</span>
                                 </li>
-                                {session.role === 'admin' && (
+                                {session?.role === 'admin' && (
                                     <li className="flex items-center justify-between">
                                         <span className="text-muted-foreground">Diyetisyen Ücreti</span>
                                         <span>{customerDetail.invoices.adminPrice} ₺</span>
@@ -159,7 +168,7 @@ export default function CustomerDetail(props: { className?: string }) {
                                     <span className="text-muted-foreground">Salon Kazancı</span>
                                     <span>{(Number(customerDetail.invoices.sportCenterPrice) * Number(customerDetail.invoices.commissionPercentage)) / 100} ₺</span>
                                 </li>
-                                {session.role === 'admin' && (
+                                {session?.role === 'admin' && (
                                     <li className="flex items-center justify-between">
                                         <span className="text-muted-foreground">Diyetisyen Kazancı</span>
                                         <span>{Number(customerDetail.invoices.adminPrice) - (Number(customerDetail.invoices.sportCenterPrice) * Number(customerDetail.invoices.commissionPercentage)) / 100} ₺</span>

@@ -1,5 +1,5 @@
 "use server"
-import { eq } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { verifySession } from './session.action';
 import db from '../lib/db';
 import { customers, invoices, users } from '../lib/drizzle/schema';
@@ -45,23 +45,18 @@ export const getUser = async (): Promise<User | null> => {
 export async function getTotalProfitById(): Promise<Response | null> {
     const session = await verifySession();
     if (!session) return null;
-
     try {
         const query = session.role === 'admin' ?
-            db.select().from(invoices) :
-            db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(eq(customers.userId, session.id as string));
+            db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)) :
+            db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(and(eq(customers.userId, session.id as string), or(eq(customers.status, 'active'), eq(customers.status, 'inactive'))));
         const response = await query.execute();
-
-        const profit = response.map((item: any) => item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100);
-        const totalProfit = profit.reduce((a: any, b: any) => a + b, 0);
-
+        const profit = response.map((item: any) => Number(item.invoices.sportCenterPrice) * Number(item.invoices.commissionPercentage) / 100);
+        let totalProfit = profit.reduce((a: any, b: any) => a + b, 0);
         const activeUsers = response.filter((item: any) => item.customers.status === 'active');
         const totalActiveProfit = activeUsers.reduce((total: number, item: any) => {
             const userProfit = item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100;
             return total + userProfit;
         }, 0);
-
-
         return { data: { status: 200, description: 'Kullanıcılar başarıyla çekildi. ', result: { totalActiveProfit, totalProfit } } };
     } catch (error) {
         console.log('Failed to fetch users');
