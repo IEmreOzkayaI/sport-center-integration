@@ -32,7 +32,7 @@ export default async function CustomerTable(props: { className?: string }) {
 
     return (
         <div className={cn("h-full grid grid-rows-12 shadow border rounded-md", `${props.className}`)}>
-            <Card className="row-span-11 shadow-none border-none">
+            <Card className="row-span-11 shadow-none border-none overflow-y-scroll">
                 <CardHeader className="px-7">
                     <div className="flex justify-between">
                         <CardTitle>Üye Tablosu</CardTitle>

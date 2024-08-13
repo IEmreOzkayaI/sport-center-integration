@@ -6,7 +6,7 @@ import {
 } from "@/definitions";
 import db from "@/lib/db";
 import { customers, invoices, packages, users } from "@/lib/drizzle/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "./session.action";
 
@@ -36,7 +36,9 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
     const packageData = await db.select().from(packages).where(and(eq(packages.duration, package_), eq(packages.userId, userId), isNull(packages.deletedAt))).execute();
 
 
-    if (!packageData[0]) return { data: { status: 400, description: "Paket bulunamadı.", result: null } };
+    if (!packageData[0]) {
+        return { data: { status: 400, description: "Paket bulunamadı.", result: null } }
+    };
 
     // Check if the customer already exists
     const customerData = await db.select().from(customers).where(and(eq(customers.phone, phone), isNull(customers.deletedAt))).execute();
@@ -112,15 +114,16 @@ export async function updateCustomerStatus(customerId: string, status: string): 
     }
 
     try {
-        const data = await db
-            .update(customers)
-            .set({ status: status as "active" | "inactive" | "pending" | null | undefined })
-            .where(
+        const query = session.role === 'admin'
+            ? db.update(customers).set({ status: status as "active" | "inactive" | "pending" | null | undefined }).where(eq(customers.id, customerId))
+            : db.update(customers).set({ status: status as "active" | "inactive" | "pending" | null | undefined }).where(
                 and(
                     eq(customers.id, customerId),
                     eq(customers.userId, session.id as string)
                 )
-            ).execute();
+            );
+
+        const data = await query.execute();
 
         revalidatePath('/dashboard');
         return data;
@@ -167,8 +170,12 @@ export async function getActiveAndInactiveCustomersByUserId(): Promise<any | nul
     try {
         const query = session.role === 'admin'
             ? db.select().from(customers)
-            : db.select().from(customers).where(eq(customers.userId, session.id as string));
-
+            : db.select().from(customers).where(
+                and(
+                    eq(customers.userId, session.id as string),
+                    or(eq(customers.status, "active"), eq(customers.status, "inactive"))
+                )
+            );
         const data = await query.execute();
         return { data: { status: 200, description: "Aktif ve pasif müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
@@ -193,6 +200,46 @@ export async function getActiveCustomersByUserId(): Promise<any | null> {
         return { data: { status: 200, description: "Aktif müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
         console.error('Failed to fetch active customers:', error);
+        return null;
+    }
+}
+
+export async function getInactiveCustomersByUserId(): Promise<any | null> {
+    const session = await verifySession();
+    if (!session) {
+        console.log('No session found');
+        return null;
+    }
+
+    try {
+        const query = session.role === 'admin'
+            ? db.select().from(customers).where(eq(customers.status, 'inactive'))
+            : db.select().from(customers).where(and(eq(customers.userId, session.id as string), eq(customers.status, 'inactive')));
+
+        const data = await query.execute();
+        return { data: { status: 200, description: "Pasif müşteriler başarıyla getirildi.", result: data } };
+    } catch (error) {
+        console.error('Failed to fetch inactive customers:', error);
+        return null;
+    }
+}
+
+export async function getPendingCustomersByUserId(): Promise<any | null> {
+    const session = await verifySession();
+    if (!session) {
+        console.log('No session found');
+        return null;
+    }
+
+    try {
+        const query = session.role === 'admin'
+            ? db.select().from(customers).where(eq(customers.status, 'pending'))
+            : db.select().from(customers).where(and(eq(customers.userId, session.id as string), eq(customers.status, 'pending')));
+
+        const data = await query.execute();
+        return { data: { status: 200, description: "Bekleyen müşteriler başarıyla getirildi.", result: data } };
+    } catch (error) {
+        console.error('Failed to fetch pending customers:', error);
         return null;
     }
 }

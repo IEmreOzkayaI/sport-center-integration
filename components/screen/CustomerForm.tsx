@@ -31,6 +31,7 @@ export default function CustomerForm({ className, userList }: { className?: stri
             showToast(state.data.description, 'success', true)
         }
         if (state.data.status === 400) {
+            window.location.reload();
             showToast(state.data.description, 'error', false)
         }
     }
@@ -96,7 +97,8 @@ export default function CustomerForm({ className, userList }: { className?: stri
 }
 
 export function CreateCustomerButton() {
-    const { pending, data } = useFormStatus();
+    const { pending } = useFormStatus();
+
     return (
         <Button aria-disabled={pending} type="submit" className={`mt-4 w-full ${pending ? 'opacity-80' : ''}`}>
             {pending ? 'Ekle...' : 'Ekle'}
