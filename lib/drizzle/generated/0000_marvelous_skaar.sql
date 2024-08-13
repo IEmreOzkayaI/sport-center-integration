@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."status" AS ENUM('active', 'inactive', 'pending');
+ CREATE TYPE "public"."status" AS ENUM('active', 'inactive', 'pending', 'deleted');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS "notes" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "packages" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"price" text,
+	"price" text DEFAULT '0' NOT NULL,
 	"duration" "package" DEFAULT '1',
 	"status" "status" DEFAULT 'active',
 	"user_id" uuid,

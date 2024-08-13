@@ -1,6 +1,6 @@
 import { pgEnum, pgTable, text, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
 
-export const statusEnum = pgEnum('status', ['active', 'inactive', 'pending']);
+export const statusEnum = pgEnum('status', ['active', 'inactive', 'pending', 'deleted']);
 export const packageEnum = pgEnum('package', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
 export const roleEnum = pgEnum('role', ['admin', 'sport_center']);
 

@@ -62,7 +62,7 @@ export type CreateCustomerFormState = | {
 
 
 export const CreateCustomerFormSchema = z.object({
-    fullName: z.string().min(1, "Ad soyad giriniz!").regex(/^[a-zA-Z\s]*$/, "Ad soyad sadece harf içerebilir!"),
+    fullName: z.string().min(1, "Ad soyad giriniz!").regex(/^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]*$/, "Ad soyad sadece harf içerebilir!"),
     phone: z.string().min(1, "Telefon numarası giriniz!").regex(/^\(\d{3}\) \d{3} \d{4}$/, "Telefon numarası sadece rakam içerebilir!"),
     package_: z.enum(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']),
     userId: z.string().min(1, "Kullanıcı Seçiniz"),
