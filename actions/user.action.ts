@@ -47,7 +47,7 @@ export async function getTotalProfitById(): Promise<Response | null> {
     if (!session) return null;
     try {
         const query = session.role === 'admin' ?
-            db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)) :
+            db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(or(eq(customers.status, 'active'), eq(customers.status, 'inactive'))) :
             db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(and(eq(customers.userId, session.id as string), or(eq(customers.status, 'active'), eq(customers.status, 'inactive'))));
         const response = await query.execute();
         const profit = response.map((item: any) => Number(item.invoices.sportCenterPrice) * Number(item.invoices.commissionPercentage) / 100);

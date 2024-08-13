@@ -143,8 +143,8 @@ export async function deleteCustomerById(customerId: string): Promise<any | null
 
     try {
         const query = session.role === 'admin'
-            ? db.update(customers).set({ deletedAt: new Date(), status: "inactive" }).where(eq(customers.id, customerId))
-            : db.update(customers).set({ deletedAt: new Date(), status: "inactive" }).where(
+            ? db.update(customers).set({ deletedAt: new Date()}).where(eq(customers.id, customerId))
+            : db.update(customers).set({ deletedAt: new Date()}).where(
                 and(
                     eq(customers.id, customerId),
                     eq(customers.userId, session.id as string)
@@ -169,7 +169,9 @@ export async function getActiveAndInactiveCustomersByUserId(): Promise<any | nul
 
     try {
         const query = session.role === 'admin'
-            ? db.select().from(customers)
+            ? db.select().from(customers).where(
+                or(eq(customers.status, "active"), eq(customers.status, "inactive"))
+            )
             : db.select().from(customers).where(
                 and(
                     eq(customers.userId, session.id as string),

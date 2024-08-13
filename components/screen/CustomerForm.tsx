@@ -31,8 +31,10 @@ export default function CustomerForm({ className, userList }: { className?: stri
             showToast(state.data.description, 'success', true)
         }
         if (state.data.status === 400) {
-            window.location.reload();
             showToast(state.data.description, 'error', false)
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500)
         }
     }
 

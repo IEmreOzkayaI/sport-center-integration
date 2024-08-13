@@ -80,7 +80,7 @@ input:-webkit-autofill {
 
   @media (max-width: 640px) {
     input {
-        font-size:16px
+        font-size:16px !important
     }
 }
 

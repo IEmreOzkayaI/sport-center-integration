@@ -15,11 +15,11 @@ export default async function CustomerDialog({ title }: { title: string }) {
     return (
         <Dialog>
             <DialogTrigger className="bg-black px-4 py-2 text-white rounded-md font-bold">{title}</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-80 rounded-md md:100">
                 <DialogHeader>
                     <DialogTitle className="mb-10">{title}</DialogTitle>
                 </DialogHeader>
-                <CustomerForm userList={userList} />
+                <CustomerForm userList={userList?.data?.result} />
             </DialogContent>
         </Dialog>
 

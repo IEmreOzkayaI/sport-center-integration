@@ -18,6 +18,15 @@ export function SignupForm() {
         }
     }, [state]);
 
+    if (state?.data) {
+        if (state.data.status === 201) {
+            showToast(state.data.description, 'success', true)
+        }
+        if (state.data.status === 400) {
+            showToast(state.data.description, 'error', false)
+        }
+    }
+
 
     const formatPhoneNumber = (value: string) => {
         let formattedValue = value.replace(/[^0-9]/g, '').slice(0, 10)

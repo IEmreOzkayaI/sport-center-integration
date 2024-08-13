@@ -86,9 +86,12 @@ export default function CustomerDetail(props: { className?: string }) {
                                 </CardDescription>
                             </div>
                             <div className="ml-auto flex items-center gap-1">
-                                <Button size="sm" variant="outline" className="h-8 gap-1">
-                                    <TrashIcon className="h-3.5 w-3.5" onClick={() => handleDelete(customerDetail.customers.id)} />
-                                </Button>
+                                {session?.role === 'admin' && (
+                                    <Button size="sm" variant="outline" className="h-8 gap-1">
+                                        <TrashIcon className="h-3.5 w-3.5" onClick={() => handleDelete(customerDetail.customers.id)} />
+                                    </Button>
+                                )}
+
                             </div>
                         </CardHeader>
                         <CardContent className="p-6 text-sm">

@@ -47,7 +47,7 @@ export const PackageMenu = () => {
         <PopoverTrigger className="text-center">
             <span className="">Paket</span>
         </PopoverTrigger>
-        <PopoverContent className="mt-2 w-96">
+        <PopoverContent className="mt-4 w-80 sm:w-96">
             <PlusIcon className="border w-full rounded-md mb-4" onClick={() => setOpenPackageForm(prev => !prev)} />
             {openPackageForm && <PackageForm setPackages={setPackages} packages={packages} />}
             <MenuPackageList packages={packages} setPackages={setPackages} />
@@ -103,7 +103,7 @@ export const PackageForm = ({ setPackages, packages }: { setPackages: any, packa
                     </SelectContent>
                 </Select>
                 <div className="relative w-3/5">
-                    <input type="text" placeholder="Fiyat Giriniz" className="text-sm w-full p-2 border border-gray-300 rounded-md"
+                    <input type="text" placeholder="Fiyat" className="text-sm w-full p-2 border border-gray-300 rounded-md"
                         value={price} onChange={handlePriceChange} id="price" name="price" />
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2">
                         ₺
