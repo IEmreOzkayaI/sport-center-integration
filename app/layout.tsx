@@ -16,8 +16,9 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
     title: "Spor Diyetisyenim",
     description: "Spor Diyetisyenim",
-    viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 };
+
+export const viewport = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
     const session = await getUser();
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <html lang="en">
             <head>
                 <link rel="icon" href="/logo.png" sizes="any" />
+                <meta name="viewport" content={viewport} />
             </head>
             <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
                 <Outline>
