@@ -169,7 +169,9 @@ export async function getActiveAndInactiveCustomersByUserId(): Promise<any | nul
 
     try {
         const query = session.role === 'admin'
-            ? db.select().from(customers)
+            ? db.select().from(customers).where(
+                or(eq(customers.status, "active"), eq(customers.status, "inactive"))
+            )
             : db.select().from(customers).where(
                 and(
                     eq(customers.userId, session.id as string),
