@@ -1,5 +1,5 @@
 {
-  "id": "83fd8740-ed11-4bdd-8420-854d701f0a91",
+  "id": "9c7fb562-4455-4538-bfc3-cff081780913",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -247,7 +247,8 @@
           "name": "price",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'0'"
         },
         "duration": {
           "name": "duration",
@@ -423,7 +424,8 @@
       "values": [
         "active",
         "inactive",
-        "pending"
+        "pending",
+        "deleted"
       ]
     }
   },
