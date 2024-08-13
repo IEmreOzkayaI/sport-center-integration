@@ -16,10 +16,7 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
     title: "Spor Diyetisyenim",
     description: "Spor Diyetisyenim",
-    viewport: "width=device-width, initial-scale=1",
-    icons: [
-
-    ],
+    viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
