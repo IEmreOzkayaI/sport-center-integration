@@ -103,7 +103,7 @@ export const PackageForm = ({ setPackages, packages }: { setPackages: any, packa
                     </SelectContent>
                 </Select>
                 <div className="relative w-3/5">
-                    <input type="text" placeholder="Fiyat Giriniz" className="text-sm w-full p-2 border border-gray-300 rounded-md"
+                    <input type="text" placeholder="Fiyat" className="text-sm w-full p-2 border border-gray-300 rounded-md"
                         value={price} onChange={handlePriceChange} id="price" name="price" />
                     <span className="absolute inset-y-0 right-0 flex items-center pr-2">
                         ₺
