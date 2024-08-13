@@ -5,7 +5,7 @@ import {
     CreateCustomerFormSchema, CreateCustomerFormState
 } from "@/definitions";
 import db from "@/lib/db";
-import { customers, invoices, packages, users } from "@/lib/drizzle/schema";
+import { customers, invoices, packages, statusEnum, users } from "@/lib/drizzle/schema";
 import { and, eq, isNull, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "./session.action";
@@ -90,7 +90,7 @@ export async function getCustomersByUserId(): Promise<any[] | null> {
 
     try {
         const query = session.role === 'admin'
-            ? db.select().from(customers).leftJoin(invoices, eq(customers.id, invoices.customerId))
+            ? db.select().from(customers).leftJoin(invoices, eq(customers.id, invoices.customerId)).where(isNull(customers.deletedAt))
             : db.select().from(customers).leftJoin(invoices, eq(customers.id, invoices.customerId)).where(and(
                 eq(customers.userId, session.id as string),
                 isNull(customers.deletedAt)
@@ -143,14 +143,13 @@ export async function deleteCustomerById(customerId: string): Promise<any | null
 
     try {
         const query = session.role === 'admin'
-            ? db.update(customers).set({ deletedAt: new Date(), status: 'deleted'}).where(eq(customers.id, customerId))
-            : db.update(customers).set({ deletedAt: new Date(), status: 'deleted'}).where(
+            ? db.update(customers).set({ deletedAt: new Date(), status: "deleted" }).where(eq(customers.id, customerId))
+            : db.update(customers).set({ deletedAt: new Date(), status: "deleted" }).where(
                 and(
                     eq(customers.id, customerId),
                     eq(customers.userId, session.id as string)
                 )
             );
-
         const data = await query.execute();
         revalidatePath('/dashboard');
         return { data: { status: 200, description: "Müşteri başarıyla silindi.", result: data } };
