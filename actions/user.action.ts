@@ -50,13 +50,28 @@ export async function getTotalProfitById(): Promise<Response | null> {
             db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(or(eq(customers.status, 'active'), eq(customers.status, 'inactive'))) :
             db.select().from(invoices).leftJoin(customers, eq(customers.id, invoices.customerId)).where(and(eq(customers.userId, session.id as string), or(eq(customers.status, 'active'), eq(customers.status, 'inactive'))));
         const response = await query.execute();
-        const profit = response.map((item: any) => Number(item.invoices.sportCenterPrice) * Number(item.invoices.commissionPercentage) / 100);
+        let profit;
+        if (session.role === 'admin') {
+            profit = response.map((item: any) => item.invoices.adminPrice - (item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100));
+        } else {
+            profit = response.map((item: any) => Number(item.invoices.sportCenterPrice) * Number(item.invoices.commissionPercentage) / 100);
+        }
         let totalProfit = profit.reduce((a: any, b: any) => a + b, 0);
         const activeUsers = response.filter((item: any) => item.customers.status === 'active');
-        const totalActiveProfit = activeUsers.reduce((total: number, item: any) => {
-            const userProfit = item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100;
-            return total + userProfit;
-        }, 0);
+
+        let totalActiveProfit;
+        if (session.role === 'admin') {
+            totalActiveProfit = activeUsers.reduce((total: number, item: any) => {
+                const userProfit = item.invoices.adminPrice - (item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100);
+                return total + userProfit;
+            }, 0);
+        } else {
+              totalActiveProfit = activeUsers.reduce((total: number, item: any) => {
+                const userProfit = item.invoices.sportCenterPrice * item.invoices.commissionPercentage / 100;
+                return total + userProfit;
+            }, 0);
+        }
+
         return { data: { status: 200, description: 'Kullanıcılar başarıyla çekildi. ', result: { totalActiveProfit, totalProfit } } };
     } catch (error) {
         console.log('Failed to fetch users');
