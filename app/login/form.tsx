@@ -33,10 +33,10 @@ export function LoginForm() {
         <form action={action}>
             <div className="flex flex-col gap-2 relative">
                 <div>
-                    <Input id="username" name="username" placeholder="melisa.ozcan" />
+                    <Input id="username" name="username" placeholder="kullanıcı adı" />
                 </div>
                 <div className="mt-4">
-                    <Input id="password" type="password" name="password" />
+                    <Input id="password" type="password" name="password" placeholder='şifre' />
                 </div>
                 <LoginButton />
                 <div className="absolute bottom-[-4.5rem] right-0 text-center p-2 rounded-md pt-10 cursor-pointer ">
