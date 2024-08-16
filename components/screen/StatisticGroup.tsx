@@ -4,12 +4,14 @@ import sessionStore from '@/store/session.store';
 import { Activity, Building, CreditCard, Users } from "lucide-react";
 import StatisticCard from './StatisticCard';
 import { useState } from "react";
+import { Card } from "../ui/card";
 
 export default function StatisticGroup({ sportCenters, totalMemberAmount, activeMemberAmount, inActiveMemberAmount, pendingMemberAmount, totalProfit }: { sportCenters: any, totalMemberAmount: any, activeMemberAmount: any, inActiveMemberAmount: any, pendingMemberAmount: any, totalProfit: any }) {
 
     const session = sessionStore((state: any) => state.session);
     const [userStatisticIndex, setUserStatisticIndex] = useState(0);
     const [profitStatisticIndex, setProfitStatisticIndex] = useState(0);
+    const [showSportCenterList, setShowSportCenterList] = useState(false);
 
     const handleUserStatisticIndex = (index: number) => {
         setUserStatisticIndex(index);
@@ -19,10 +21,13 @@ export default function StatisticGroup({ sportCenters, totalMemberAmount, active
         setProfitStatisticIndex(index);
     }
 
+
     return (
         <>
             {session?.role === "admin" && (
-                <StatisticCard className="w-auto md:w-full" title={TOTAL_SPORT_CENTER} value={sportCenters?.data?.result?.length} icon={<Building className="h-4 w-4 text-muted-foreground" />} subText={FROM_OLD_TO_NOW} />
+                <>
+                    <StatisticCard className="w-auto md:w-full" title={TOTAL_SPORT_CENTER} value={sportCenters?.data?.result?.length} icon={<Building className="h-4 w-4 text-muted-foreground" />} subText={FROM_OLD_TO_NOW} />
+                </>
             )}
 
             {(userStatisticIndex === 0 || userStatisticIndex === null) && (

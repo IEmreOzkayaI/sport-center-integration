@@ -1,6 +1,6 @@
 "use server"
 
-import { getActiveAndInactiveCustomersByUserId, getActiveCustomersByUserId, getInactiveCustomersByUserId, getPendingCustomersByUserId } from "@/actions/customer.action";
+import { getActiveAndInactiveCustomersByUserId, getActiveCustomersByUserId, getCustomersByUserId, getInactiveCustomersByUserId, getPendingCustomersByUserId } from "@/actions/customer.action";
 import { verifySession } from "@/actions/session.action";
 import { getAllUsers, getTotalProfitById } from "@/actions/user.action";
 import CustomerDetail from "@/components/screen/CustomerDetail";
@@ -8,13 +8,15 @@ import CustomerTable from "@/components/screen/CustomerTable";
 import StatisticGroup from "@/components/screen/StatisticGroup";
 
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: { page?: number, limit?: number, search?: string } }) {
     const totalMemberAmount = await getActiveAndInactiveCustomersByUserId();
     const activeMemberAmount = await getActiveCustomersByUserId();
     const inActiveMemberAmount = await getInactiveCustomersByUserId();
     const pendingMemberAmount = await getPendingCustomersByUserId();
     const sportCenters = await getAllUsers();
     const totalProfit = await getTotalProfitById();
+    const limit = 10
+    const customers = await getCustomersByUserId(0, limit, "");
     return (
         <main className="
                 flex flex-col
@@ -40,7 +42,7 @@ export default async function Home() {
                 sm:flex sm:flex-col sm:gap-4
                 md:row-span-10 md:flex md:flex-row md:gap-10
                 ">
-                <CustomerTable className="w-full md:w-3/4  h-full" />
+                <CustomerTable className="w-full md:w-3/4  h-full" serverCustomers={customers} limit={limit} />
                 <CustomerDetail className="w-full md:w-1/4 h-full" />
             </div>
         </main>
