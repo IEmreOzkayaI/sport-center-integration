@@ -7,6 +7,8 @@ import { Inter as FontSans } from "next/font/google";
 import { Toaster } from "sonner";
 import { getUser } from "@/actions/user.action";
 import Navbar from "@/components/common/Navbar";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -35,6 +37,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     {children}
                     <Toaster />
                 </Outline>
+                    <Analytics/>
+                    <SpeedInsights/>
             </body>
         </html>
     );
