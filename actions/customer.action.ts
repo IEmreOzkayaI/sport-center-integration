@@ -6,7 +6,7 @@ import {
 } from "@/definitions";
 import db from "@/lib/db";
 import { customers, invoices, packages, statusEnum, users } from "@/lib/drizzle/schema";
-import { and, eq, isNull, or } from "drizzle-orm";
+import { and, eq, isNull, like, or, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "./session.action";
 
@@ -56,10 +56,14 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
 
     // 3. Insert the new customer into the database
     let data = await db.insert(customers).values({
-        fullName,
+        fullName: fullName.toLocaleLowerCase('tr'),
         phone,
         userId,
     }).returning({ id: customers.id });
+
+    if (!data[0]) return { data: { status: 400, description: "Müşteri oluşturulamadı.", result: null } };
+
+    const user = await db.select().from(users).where(eq(users.id, userId)).execute();
 
     // Create invoice
     const invoiceData = await db.insert(invoices).values({
@@ -67,7 +71,7 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
         packageName: packageData[0].duration,
         packageStartDate: new Date(),
         packageEndDate: new Date(new Date().getFullYear(), Number(new Date().getMonth() + Number(packageData[0].duration)), new Date().getDate()),
-        sportCenterName: session.username,
+        sportCenterName: user[0].username,
         sportCenterPrice: packageData[0].price,
         commissionPercentage: COMMISSION_PERCENTAGE,
         adminPrice: selectedPackage?.packages?.price,
@@ -81,24 +85,59 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
 }
 
 
-export async function getCustomersByUserId(): Promise<any[] | null> {
+
+export async function getCustomersByUserId(
+    page: number,
+    limit: number,
+    search: string
+): Promise<CustomerResult | null> {
     const session = await verifySession();
     if (!session) {
-        console.log('No session found');
+        console.warn('No session found');
         return null;
     }
-
+    console.log('session girdi');
     try {
-        const query = session.role === 'admin'
-            ? db.select().from(customers).leftJoin(invoices, eq(customers.id, invoices.customerId)).where(isNull(customers.deletedAt))
-            : db.select().from(customers).leftJoin(invoices, eq(customers.id, invoices.customerId)).where(and(
-                eq(customers.userId, session.id as string),
-                isNull(customers.deletedAt)
-            ));
+        const isAdmin = session.role === 'admin';
+        const userCondition = isAdmin ? undefined : eq(customers.userId, session.id as string);
 
-        const data = await query.execute();
+        let searchCondition;
+        if (['aktif', 'pasif', 'talep'].includes(search.toLowerCase())) {
+            const searchValue = search === 'aktif' ? 'active' : search === 'pasif' ? 'inactive' : 'pending';
+            searchCondition = eq(customers.status,searchValue);
+        } else if (search) {
+            searchCondition = or(
+                like(customers.fullName, `%${search}%`),
+                like(users.username, `%${search}%`)
+            );
+        }
 
-        return data;
+        // Base query with conditions
+        const baseQuery = db
+            .select()
+            .from(customers)
+            .leftJoin(invoices, eq(customers.id, invoices.customerId))
+            .leftJoin(users, eq(customers.userId, users.id)) // Assuming users table is joined for searching
+            .where(and(isNull(customers.deletedAt), userCondition, searchCondition))
+            .limit(limit)
+            .offset(page * limit);
+
+        // Count query with conditions
+        const countQuery = db
+            .select({ count: sql`count(*)`.mapWith(Number) })
+            .from(customers)
+            .leftJoin(invoices, eq(customers.id, invoices.customerId))
+            .leftJoin(users, eq(customers.userId, users.id)) // Assuming users table is joined for counting
+            .where(and(isNull(customers.deletedAt), userCondition, searchCondition));
+
+        const [data, countResult] = await Promise.all([
+            baseQuery.execute(),
+            countQuery.execute(),
+        ]);
+
+        const count = countResult[0]?.count || 0;
+
+        return { data, count };
     } catch (error) {
         console.error('Failed to fetch customers:', error);
         return null;

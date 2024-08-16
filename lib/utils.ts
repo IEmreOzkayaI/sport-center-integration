@@ -34,3 +34,8 @@ export const showToast = (message: any, key: string, isReload = false) => {
         }, 1000);
     }
 };
+
+
+export function capitalizeWords(str:string) {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+}

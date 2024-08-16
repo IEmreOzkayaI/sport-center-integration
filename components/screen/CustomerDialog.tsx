@@ -1,4 +1,4 @@
-"use server"
+"use client"
 import {
     Dialog,
     DialogContent,
@@ -8,10 +8,18 @@ import {
 } from "@/components/ui/dialog";
 import CustomerForm from "./CustomerForm";
 import { getAllUsers } from "@/actions/user.action";
+import { useEffect, useState } from "react";
 
 
-export default async function CustomerDialog({ title }: { title: string }) {
-    const userList = await getAllUsers()
+export default function CustomerDialog({ title }: { title: string }) {
+    const [userList, setUserList] = useState<any>()
+    useEffect(() => {
+        const getUserList = async () => {
+            const data = await getAllUsers()
+            setUserList(data)
+        }
+        getUserList()
+    }, [])
     return (
         <Dialog>
             <DialogTrigger className="bg-black px-4 py-2 text-white rounded-md font-bold">{title}</DialogTrigger>

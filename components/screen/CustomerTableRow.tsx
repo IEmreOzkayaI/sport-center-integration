@@ -3,10 +3,10 @@
 import {
     TableCell,
     TableRow
-} from "@/components/ui/table"
-import CustomerStatus from './CustomerStatus'
+} from "@/components/ui/table";
 import customerStore from "@/store/customer.store";
-import sessionStore from "@/store/session.store";
+import CustomerStatus from './CustomerStatus';
+import { capitalizeWords } from "@/lib/utils";
 
 export default function CustomerTableRow({ customerAndInvoiceList }: { customerAndInvoiceList: any }) {
     const setCustomer = customerStore((state: any) => state.setCustomer);
@@ -16,10 +16,10 @@ export default function CustomerTableRow({ customerAndInvoiceList }: { customerA
                 customerAndInvoiceList?.map((item: any) => (
                     <TableRow key={item.customers.id} className="hover:cursor-pointer" onClick={() => setCustomer(item)}>
                         <TableCell className="text-center">
-                            <CustomerStatus customer={item}/>
+                            <CustomerStatus customer={item} />
                         </TableCell>
                         <TableCell>
-                            <div className="font-medium text-center">{item.customers.fullName}</div>
+                            <div className="font-medium text-center">{capitalizeWords(item.customers.fullName)}</div>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell text-center">{item.invoices.packageName} Aylık</TableCell>
                         <TableCell className="hidden md:table-cell text-center">{item.customers.phone}</TableCell>
