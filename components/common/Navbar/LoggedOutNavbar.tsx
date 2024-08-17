@@ -11,7 +11,7 @@ export default function LoggedOutNavbar() {
                 <ul className="flex md:space-x-6 items-center justify-center">
                     <li><Link href="/signup" className="hover:underline">Kayıt Ol</Link></li>
                     <li>
-                        <Link href="/login" className="ml-5 sm:ml-0 bg-white text-black px-4 py-2 rounded-full">Giriş Yap</Link>
+                        <Link href="/login" className="ml-5 sm:ml-0 bg-white text-black px-4 py-2 rounded-md">Giriş Yap</Link>
                     </li>
                 </ul>
             </nav>
