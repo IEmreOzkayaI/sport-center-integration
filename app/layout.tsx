@@ -37,8 +37,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     {children}
                     <Toaster />
                 </Outline>
-                    <Analytics/>
-                    <SpeedInsights/>
+                <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     );

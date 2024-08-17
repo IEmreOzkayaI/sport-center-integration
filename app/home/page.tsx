@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowDownFromLine, ArrowDownToLine } from 'lucide-react';
 import Head from 'next/head';
 import Image from 'next/image';
 
@@ -5,15 +6,19 @@ export default function Home() {
     return (
         <div className='rounded-md'>
             <main className="bg-black text-white text-center py-20 rounded-b-md rounded-t-md sm:rounded-t-none">
-                <div className="mx-auto flex flex-col items-center sm:items-center">
-                    <h2 className="text-xl sm:text-4xl font-bold mb-4">High Converting Software and SaaS Landing Page</h2>
-                    <p className="text-sm sm:text-lg mb-8 w-72 sm:w-screen">
-                        Lorem ipsum dolor sit amet, consectetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                <div className="flex flex-col items-center sm:items-center">
+                    <h2 className="text-xl sm:text-4xl font-bold mb-4">Spor Salonları ve Diyetisyenler Arası Köprü</h2>
+                    <p className="text-sm text-center sm:text-lg">
+                        Üyelerinizi ve diyetisyenlerinizi bir araya getirerek, üyelerinizi diyetisyenlerinize yönlendirin ve üyelerinizin diyetisyenlerine kolayca ulaşmasını sağlayın.
                     </p>
-                    <button className="bg-white text-black px-4 py-2 sm:px-6 sm:py-3 rounded-full text-lg ">Get Started</button>
+                    <p className='mb-8'>
+                        Kazançlarınızı da rahatlıkla takip edin.
+                    </p>
+                    <button disabled="true" className="text-center bg-white text-black px-4 py-2 sm:px-6 sm:py-3 rounded-md text-lg ">Neler Yapabilirsiniz ?
+                    </button>
 
                 </div>
-                <div className="mt-12 relative">
+                <div className="mt-3 relative">
                     <img src="/landing.png" alt="Dashboard" className="mx-auto rounded-lg shadow-lg" />
                 </div>
             </main>
