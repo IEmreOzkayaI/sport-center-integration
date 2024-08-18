@@ -14,7 +14,7 @@ export default function Home() {
                     <p className='mb-8'>
                         Kazançlarınızı da rahatlıkla takip edin.
                     </p>
-                    <button disabled="true" className="text-center bg-white text-black px-4 py-2 sm:px-6 sm:py-3 rounded-md text-lg ">Neler Yapabilirsiniz ?
+                    <button disabled={true} className="text-center bg-white text-black px-4 py-2 sm:px-6 sm:py-3 rounded-md text-lg ">Neler Yapabilirsiniz ?
                     </button>
 
                 </div>
