@@ -19,7 +19,7 @@ export default function Home() {
 
                 </div>
                 <div className="mt-3 relative">
-                    <img src="/landing.png" alt="Dashboard" className="mx-auto rounded-lg shadow-lg" />
+                    <img src="/landing.png" alt="Dashboard" className="mx-auto rounded-lg shadow-lg" width={1920} height={1080} />
                 </div>
             </main>
         </div>
