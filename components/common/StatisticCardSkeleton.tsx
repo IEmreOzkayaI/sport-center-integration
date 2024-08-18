@@ -8,15 +8,17 @@ import { cn } from "@/lib/utils";
 
 export function StatisticCardSkeleton({ className }: { className?: string }) {
     return (
-        <Card className={cn("animate-pulse", className)}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
-            </CardHeader>
-            <CardContent>
-                <div className="h-8 bg-gray-300 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-            </CardContent>
-        </Card>
+        <span className="w-full">
+            <Card className={cn("animate-pulse", className)}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                    <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-8 bg-gray-300 rounded w-1/2 mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                </CardContent>
+            </Card>
+        </span>
     )
 }
