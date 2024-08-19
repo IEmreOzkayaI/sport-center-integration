@@ -6,9 +6,9 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import Image from 'next/image';
-import { SignupForm } from './form';
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { SignupForm } from "@/components/signup/Form";
 
 export default function Page() {
     return (

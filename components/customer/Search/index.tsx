@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Input } from '../ui/input'
+import { Input } from '../../ui/input'
 import { getCustomersByUserId } from '@/actions/customer.action'
 import { SearchIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'

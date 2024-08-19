@@ -1,9 +1,6 @@
 'use client'
 
-import Link from "next/link";
-import { Button } from "../ui/button";
-
-export default function PaginationLine(props: { className?: string, page: number, limit: number, count: number, next: () => void, prev: () => void }) {
+export default function Pagination(props: { className?: string, page: number, limit: number, count: number, next: () => void, prev: () => void }) {
     return (
         <div className={`${props.className} flex items-center justify-between px-3`}>
             <div className="text-gray-400 mb-[-16px]">{Number(props.page) * Number(props.limit)} to {Number(props.page) * Number(props.limit) + Number(props.limit)}</div>
