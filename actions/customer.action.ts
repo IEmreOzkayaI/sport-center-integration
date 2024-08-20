@@ -17,12 +17,15 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
     const session = await verifySession();
     if (!session) return null;
     // 1. Validate form fields
+    console.log('createCustomer function called with parameters:', { formData });
     const validatedFields = CreateCustomerFormSchema.safeParse({
         fullName: formData.get('fullName'),
         phone: formData.get('phone'),
         package_: formData.get('package_'),
         userId: formData.get('userId'),
     });
+
+    console.log('Validated fields:', validatedFields);
 
     // If any form fields are invalid, return early
     if (!validatedFields.success) {
@@ -32,9 +35,12 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
     // 2. Prepare data for insertion into database
     const { fullName, phone, package_, userId } = validatedFields.data;
 
+    console.log('Full name:', fullName, 'Phone:', phone, 'Package:', package_, 'User ID:', userId);
+
     // Check if the package exist
     const packageData = await db.select().from(packages).where(and(eq(packages.duration, package_), eq(packages.userId, userId), isNull(packages.deletedAt))).execute();
 
+    console.log('Package data:', packageData);
 
     if (!packageData[0]) {
         return { data: { status: 400, description: "Paket bulunamadı.", result: null } }
@@ -43,6 +49,8 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
     // Check if the customer already exists
     const customerData = await db.select().from(customers).where(and(eq(customers.phone, phone), isNull(customers.deletedAt))).execute();
 
+    console.log('Customer data:', customerData);
+
     if (customerData[0]) return {
         data: { status: 400, description: "Bu telefon numarasıyla müşteri zaten mevcut.", result: null }
     };
@@ -50,9 +58,13 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
     // Take admin packages
     const adminPackages = await db.select().from(packages).fullJoin(users, eq(packages.userId, users.id)).where(and(eq(users.role, 'admin'), isNull(packages.deletedAt))).execute();
 
+    console.log('Admin packages:', adminPackages);
+
     if (!adminPackages[0]) return { data: { status: 400, description: "Admin paketleri bulunamadı.", result: null } };
 
     const selectedPackage = adminPackages.find((p: any) => p.packages.duration === package_);
+
+    console.log('Selected package:', selectedPackage);
 
     // 3. Insert the new customer into the database
     let data = await db.insert(customers).values({
@@ -61,9 +73,13 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
         userId,
     }).returning({ id: customers.id });
 
+    console.log('Customer data:', data);
+
     if (!data[0]) return { data: { status: 400, description: "Müşteri oluşturulamadı.", result: null } };
 
     const user = await db.select().from(users).where(eq(users.id, userId)).execute();
+
+    console.log('User data:', user);
 
     // Create invoice
     const invoiceData = await db.insert(invoices).values({
@@ -76,6 +92,8 @@ export async function createCustomer(state: CreateCustomerFormState, formData: F
         commissionPercentage: COMMISSION_PERCENTAGE,
         adminPrice: selectedPackage?.packages?.price,
     }).returning({ id: packages.id });
+
+    console.log('Invoice data:', invoiceData);
 
     const customer = data[0];
 
@@ -91,20 +109,21 @@ export async function getCustomersByUserId(
     limit: number,
     search: string
 ): Promise<CustomerResult | null> {
+    console.log('getCustomersByUserId function called with parameters:', { page, limit, search });
+
     const session = await verifySession();
     if (!session) {
         console.warn('No session found');
         return null;
     }
-    console.log('session girdi');
     try {
         const isAdmin = session.role === 'admin';
         const userCondition = isAdmin ? undefined : eq(customers.userId, session.id as string);
 
         let searchCondition;
-        if (['aktif', 'pasif', 'talep'].includes(search.toLowerCase())) {
+        if (['aktif', 'pasif', 'talep'].includes(search.toLocaleLowerCase())) {
             const searchValue = search === 'aktif' ? 'active' : search === 'pasif' ? 'inactive' : 'pending';
-            searchCondition = eq(customers.status,searchValue);
+            searchCondition = eq(customers.status, searchValue);
         } else if (search) {
             searchCondition = or(
                 like(customers.fullName, `%${search}%`),
@@ -137,6 +156,9 @@ export async function getCustomersByUserId(
 
         const count = countResult[0]?.count || 0;
 
+        console.log('Fetched customers:', data);
+        console.log('Count of fetched customers:', count);
+
         return { data, count };
     } catch (error) {
         console.error('Failed to fetch customers:', error);
@@ -146,6 +168,7 @@ export async function getCustomersByUserId(
 
 
 export async function updateCustomerStatus(customerId: string, status: string): Promise<any | null> {
+    console.log('Updating customer status:', { customerId, status });
     const session = await verifySession();
     if (!session) {
         console.log('No session found');
@@ -161,8 +184,10 @@ export async function updateCustomerStatus(customerId: string, status: string): 
                     eq(customers.userId, session.id as string)
                 )
             );
+        console.log('Generated query:', query.toSQL());
 
         const data = await query.execute();
+        console.log('Updated customer:', data);
 
         revalidatePath('/dashboard');
         return data;
@@ -174,6 +199,7 @@ export async function updateCustomerStatus(customerId: string, status: string): 
 
 
 export async function deleteCustomerById(customerId: string): Promise<any | null> {
+    console.log('Deleting customer:', customerId);
     const session = await verifySession();
     if (!session) {
         console.log('No session found');
@@ -189,7 +215,10 @@ export async function deleteCustomerById(customerId: string): Promise<any | null
                     eq(customers.userId, session.id as string)
                 )
             );
+        console.log('Generated query:', query.toSQL());
+
         const data = await query.execute();
+        console.log('Deleted customer:', data);
         revalidatePath('/dashboard');
         return { data: { status: 200, description: "Müşteri başarıyla silindi.", result: data } };
     } catch (error) {
@@ -216,7 +245,11 @@ export async function getActiveAndInactiveCustomersByUserId(): Promise<any | nul
                     or(eq(customers.status, "active"), eq(customers.status, "inactive"))
                 )
             );
+
+        console.log('Generated query:', query.toSQL());
+
         const data = await query.execute();
+        console.log('Fetched active and inactive customers:', data);
         return { data: { status: 200, description: "Aktif ve pasif müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
         console.error('Failed to fetch active and inactive customers:', error);
@@ -236,7 +269,10 @@ export async function getActiveCustomersByUserId(): Promise<any | null> {
             ? db.select().from(customers).where(eq(customers.status, 'active'))
             : db.select().from(customers).where(and(eq(customers.userId, session.id as string), eq(customers.status, 'active')));
 
+        console.log('Generated query:', query.toSQL());
+
         const data = await query.execute();
+        console.log('Fetched active customers:', data);
         return { data: { status: 200, description: "Aktif müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
         console.error('Failed to fetch active customers:', error);
@@ -245,6 +281,7 @@ export async function getActiveCustomersByUserId(): Promise<any | null> {
 }
 
 export async function getInactiveCustomersByUserId(): Promise<any | null> {
+    console.log('Getting inactive customers...');
     const session = await verifySession();
     if (!session) {
         console.log('No session found');
@@ -252,11 +289,15 @@ export async function getInactiveCustomersByUserId(): Promise<any | null> {
     }
 
     try {
+        console.log('Preparing query...');
         const query = session.role === 'admin'
             ? db.select().from(customers).where(eq(customers.status, 'inactive'))
             : db.select().from(customers).where(and(eq(customers.userId, session.id as string), eq(customers.status, 'inactive')));
+        console.log('Generated query:', query.toSQL());
 
+        console.log('Executing query...');
         const data = await query.execute();
+        console.log('Fetched inactive customers:', data);
         return { data: { status: 200, description: "Pasif müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
         console.error('Failed to fetch inactive customers:', error);
@@ -265,6 +306,7 @@ export async function getInactiveCustomersByUserId(): Promise<any | null> {
 }
 
 export async function getPendingCustomersByUserId(): Promise<any | null> {
+    console.log('Getting pending customers...');
     const session = await verifySession();
     if (!session) {
         console.log('No session found');
@@ -272,11 +314,15 @@ export async function getPendingCustomersByUserId(): Promise<any | null> {
     }
 
     try {
+        console.log('Preparing query...');
         const query = session.role === 'admin'
             ? db.select().from(customers).where(eq(customers.status, 'pending'))
             : db.select().from(customers).where(and(eq(customers.userId, session.id as string), eq(customers.status, 'pending')));
+        console.log('Generated query:', query.toSQL());
 
+        console.log('Executing query...');
         const data = await query.execute();
+        console.log('Fetched pending customers:', data);
         return { data: { status: 200, description: "Bekleyen müşteriler başarıyla getirildi.", result: data } };
     } catch (error) {
         console.error('Failed to fetch pending customers:', error);
