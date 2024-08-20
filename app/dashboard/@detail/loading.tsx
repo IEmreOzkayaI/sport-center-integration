@@ -1,10 +1,7 @@
-
-import React from 'react'
+import { DetailCardSkeleton } from '@/components/skeletons/DetailCardSkeleton';
 
 const loading = () => {
-    return (
-        <div className="lds-dual-ring"></div>
-    )
-}
+  return <DetailCardSkeleton />;
+};
 
-export default loading
+export default loading;

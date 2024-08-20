@@ -16,7 +16,6 @@ import StatisticCard from "../Card";
 
 
 export function renderUserStatisticCards(
-    loading: boolean,
     index: number,
     handleIndexChange: (index: number) => void,
     totalMemberAmount: any,
@@ -25,87 +24,67 @@ export function renderUserStatisticCards(
     pendingMemberAmount: any
 ) {
     if (index === 0 || index === null) {
-        return loading ? (
-            <StatisticCardSkeleton className="w-auto md:w-full" />
-        ) : (
-            <span onClick={() => handleIndexChange(1)} className="w-full cursor-pointer">
-                <StatisticCard
-                    title={TOTAL_MEMBER_AMOUNT}
-                    value={totalMemberAmount?.data?.result?.length}
-                    icon={<Users className="h-4 w-4 text-muted-foreground" />}
-                    subText={FROM_OLD_TO_NOW}
-                />
-            </span>
-        );
+        return <span onClick={() => handleIndexChange(1)} className="w-full cursor-pointer">
+            <StatisticCard
+                title={TOTAL_MEMBER_AMOUNT}
+                value={totalMemberAmount?.data?.result?.length}
+                icon={<Users className="h-4 w-4 text-muted-foreground" />}
+                subText={FROM_OLD_TO_NOW}
+            />
+        </span>
+
     }
 
     if (index === 1 || index === null) {
-        return loading ? (
-            <StatisticCardSkeleton className="w-auto md:w-full" />
-        ) : (
-            <span onClick={() => handleIndexChange(2)} className="w-full cursor-pointer">
-                <StatisticCard
-                    title={TOTAL_ACTIVE_MEMBER}
-                    value={activeMemberAmount?.data?.result?.length}
-                    icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-                    subText={NOW}
-                />
-            </span>
-        );
+        return <span onClick={() => handleIndexChange(2)} className="w-full cursor-pointer">
+            <StatisticCard
+                title={TOTAL_ACTIVE_MEMBER}
+                value={activeMemberAmount?.data?.result?.length}
+                icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+                subText={NOW}
+            />
+        </span>
     }
 
     if (index === 2 || index === null) {
-        return loading ? (
-            <StatisticCardSkeleton className="w-auto md:w-full" />
-        ) : (
-            <span onClick={() => handleIndexChange(3)} className="w-full cursor-pointer">
-                <StatisticCard
-                    title={TOTAL_INACTIVE_MEMBER}
-                    value={inActiveMemberAmount?.data?.result?.length}
-                    icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-                    subText={NOW}
-                />
-            </span>
-        );
+        return <span onClick={() => handleIndexChange(3)} className="w-full cursor-pointer">
+            <StatisticCard
+                title={TOTAL_INACTIVE_MEMBER}
+                value={inActiveMemberAmount?.data?.result?.length}
+                icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+                subText={NOW}
+            />
+        </span>
     }
 
     if (index === 3 || index === null) {
-        return loading ? (
-            <StatisticCardSkeleton className="w-auto md:w-full" />
-        ) : (
-            <span onClick={() => handleIndexChange(4)} className="w-full cursor-pointer">
-                <StatisticCard
-                    title={TOTAL_PENDING_MEMBER}
-                    value={pendingMemberAmount?.data?.result?.length}
-                    icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-                    subText={NOW}
-                />
-            </span>
-        );
+        return <span onClick={() => handleIndexChange(0)} className="w-full cursor-pointer">
+            <StatisticCard
+                title={TOTAL_PENDING_MEMBER}
+                value={pendingMemberAmount?.data?.result?.length}
+                icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+                subText={NOW}
+            />
+        </span>
     }
 
     return null;
 }
 
 export function renderProfitStatisticCards(
-    loading: boolean,
     index: number,
     handleIndexChange: (index: number) => void,
     totalProfit: any
 ) {
     if (index === 0 || index === null) {
-        return loading ? (
-            <StatisticCardSkeleton className="w-auto md:w-full" />
-        ) : (
-            <span onClick={() => handleIndexChange(1)} className="w-full cursor-pointer">
-                <StatisticCard
-                    title={TOTAL_PROFIT}
-                    value={`${totalProfit?.data.result.totalProfit.toFixed(2)} ₺`}
-                    icon={<CreditCard className="h-4 w-4 text-muted-foreground" />}
-                    subText={FROM_OLD_TO_NOW}
-                />
-            </span>
-        );
+        return <span onClick={() => handleIndexChange(1)} className="w-full cursor-pointer">
+            <StatisticCard
+                title={TOTAL_PROFIT}
+                value={`${totalProfit?.data.result.totalProfit.toFixed(2)} ₺`}
+                icon={<CreditCard className="h-4 w-4 text-muted-foreground" />}
+                subText={FROM_OLD_TO_NOW}
+            />
+        </span>
     }
 
     if (index === 1 || index === null) {
